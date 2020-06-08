@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context=".view.LoginActivity">
+
+  <LinearLayout
+      android:elevation="10dp"
+      android:layout_marginStart="20dp"
+      android:layout_marginEnd="20dp"
+      android:paddingTop="20dp"
+      android:paddingBottom="20dp"
+      android:paddingStart="40dp"
+      android:paddingEnd="40dp"
+      android:background="@drawable/card_default"
+      android:orientation="vertical"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/logo"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/textPrimary"
+        android:textStyle="bold"
+        android:text="@string/Version"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/editTextUsername"
+        android:background="@drawable/edit_text"
+        android:hint="@string/username"
+        android:drawableStart="@drawable/ic_person"
+        android:drawablePadding="15dp"
+        android:autofillHints="@string/username"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="10dp"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/editTextPassword"
+        android:background="@drawable/edit_text"
+        android:hint="@string/password"
+        android:drawableStart="@drawable/ic_vpn_key"
+        android:drawablePadding="15dp"
+        android:autofillHints="@string/password"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp"/>
+
+    <Button
+        android:elevation="10dp"
+        android:background="@drawable/button_primary"
+        android:textColor="@color/textSecondary"
+        android:text="@string/login"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:id="@+id/buttonLogin"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="10dp"/>
+
+
+  </LinearLayout>
+
+  <Space
+      android:layout_width="match_parent"
+      android:layout_height="20dp"/>
+
+</LinearLayout>

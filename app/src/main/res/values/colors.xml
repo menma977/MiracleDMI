@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <color name="backgroundColor">#e3f1e4</color>
+  <color name="backgroundColorLoading">#31E3F1E4</color>
+
+  <color name="colorPrimary">#00cc59</color>
+  <color name="colorPrimaryLight">#5fff88</color>
+  <color name="colorPrimaryDark">#009a2a</color>
+
+  <color name="colorSecondary">#ad3834</color>
+  <color name="colorSecondaryLight">#e4685e</color>
+  <color name="colorSecondaryDark">#77000e</color>
+
+  <color name="colorAccent">#f8a138</color>
+
+  <color name="textPrimary">#000</color>
+  <color name="textSecondary">#fff</color>
+  <color name="textList">#33A5DB</color>
+
+  <color name="Default">#aaa</color>
+
+  <color name="Primary">#3379B7</color>
+  <color name="PrimaryClick">#1F486D</color>
+  <color name="Success">#26B89A</color>
+  <color name="SuccessClick">#177260</color>
+  <color name="Info">#5ABEDD</color>
+  <color name="InfoClick">#3B7C91</color>
+  <color name="Warning">#EEAC4E</color>
+  <color name="WarningClick">#976C2F</color>
+  <color name="Danger">#D7524F</color>
+  <color name="DangerClick">#83302E</color>
+
+  <color name="White">#ffffff</color>
+  <color name="Orange">#e98c00</color>
+
+  <color name="Dark">#4A5E71</color>
+  <color name="Link">#00FDFDFE</color>
+</resources>
