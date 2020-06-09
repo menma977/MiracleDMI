@@ -25,7 +25,6 @@
       android:text="@string/loading"
       android:gravity="center"
       android:textColor="@color/textPrimary"
-      android:textStyle="bold"
       android:textSize="18sp"/>
 
 </LinearLayout>

@@ -1,9 +1,9 @@
 package com.miracledmi.view
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
 import com.miracledmi.R
 import com.miracledmi.config.Loading
 import java.util.*
@@ -25,8 +25,9 @@ class LoginActivity : AppCompatActivity() {
 
     login.setOnClickListener {
       loading.openDialog()
-      Timer().schedule(2000) {
+      Timer().schedule(5000) {
         runOnUiThread {
+
           goTo = Intent(applicationContext, HomeActivity::class.java)
           startActivity(goTo)
           loading.closeDialog()

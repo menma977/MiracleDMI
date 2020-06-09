@@ -10,7 +10,7 @@ import java.util.*
 import kotlin.concurrent.schedule
 
 @SuppressLint("InflateParams")
-class Loading(activity: Activity) {
+class Loading(private val activity: Activity) {
   private val dialog = Dialog(activity, Theme_Translucent_NoTitleBar)
   private lateinit var loading: TextView
   private lateinit var timer: Timer
@@ -27,22 +27,24 @@ class Loading(activity: Activity) {
     loading = dialog.findViewById(R.id.textViewLoading)
     var countLoading = 0
     timer.schedule(500, 500) {
-      when (countLoading) {
-        3 -> {
-          countLoading = 0
-          loading.text = "Loading..."
+      activity.runOnUiThread {
+        when (countLoading) {
+          3 -> {
+            countLoading = 0
+            loading.text = "Loading..."
+          }
+          2 -> {
+            loading.text = "Loading.."
+          }
+          1 -> {
+            loading.text = "Loading."
+          }
+          else -> {
+            loading.text = "Loading"
+          }
         }
-        2 -> {
-          loading.text = "Loading.."
-        }
-        1 -> {
-          loading.text = "Loading."
-        }
-        else -> {
-          loading.text = "Loading"
-        }
+        countLoading++
       }
-      countLoading++
     }
   }
 
