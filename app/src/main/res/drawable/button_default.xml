@@ -18,7 +18,7 @@
   </item>
   <item>
     <shape android:shape="rectangle" android:padding="10dp">
-      <solid android:color="@color/backgroundColor"/>
+      <solid android:color="@color/White"/>
       <stroke android:width="2dp" android:color="@color/colorPrimary"/>
       <!-- this one is ths color of the Rounded Button -->
       <corners android:radius="10dp"/>

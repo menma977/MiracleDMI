@@ -27,7 +27,10 @@ class LoginActivity : AppCompatActivity() {
       loading.openDialog()
       Timer().schedule(2000) {
         runOnUiThread {
+          goTo = Intent(applicationContext, HomeActivity::class.java)
+          startActivity(goTo)
           loading.closeDialog()
+          finish()
         }
       }
     }

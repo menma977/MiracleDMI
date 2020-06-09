@@ -81,8 +81,8 @@
 
     <Button
         android:elevation="10dp"
-        android:background="@drawable/button_primary"
-        android:textColor="@color/textSecondary"
+        android:background="@drawable/button_default"
+        android:textColor="@color/textPrimary"
         android:text="@string/login"
         android:layout_width="match_parent"
         android:layout_height="35dp"
