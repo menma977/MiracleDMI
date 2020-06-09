@@ -6,4 +6,6 @@
   <string name="username">Username</string>
   <string name="password">Password</string>
   <string name="login">Login</string>
+  <string name="copy">Copy</string>
+  <string name="wallet">Wallet</string>
 </resources>
