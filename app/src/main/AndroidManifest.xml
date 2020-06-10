@@ -15,7 +15,14 @@
       android:supportsRtl="true"
       android:theme="@style/AppTheme"
       tools:ignore="AllowBackup">
-    <activity android:name=".view.HomeActivity"/>
+    <activity android:name=".view.ResultActivity">
+    </activity>
+    <activity
+        android:name=".view.bot.BotActivity"
+        android:theme="@style/AppTheme.NoActionBar"/>
+    <activity
+        android:name=".view.HomeActivity"
+        android:theme="@style/AppTheme.NoActionBar"/>
     <activity
         android:name=".view.LoginActivity"
         android:theme="@style/AppTheme.NoActionBar"/>

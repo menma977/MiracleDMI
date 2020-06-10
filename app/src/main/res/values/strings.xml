@@ -16,4 +16,6 @@
   <string name="welcome_description">This robot can generate a minimum of 3% profit for you and a minimum of 1% for your sponsor. But plucky robots can also lose. If the robot does not generate profit doge, then the Plucky system will automatically replace it with a Plucky wallet that you can sell or use for upgrades.</string>
   <string name="withdraw_description">You put too many doge deposits in, please withdraw all and enter with the correct nominal, or please upgrade your Plucky membership.</string>
   <string name="withdraw">Withdraw All</string>
+  <string name="play">Play</string>
+  <string name="error">Error 404</string>
 </resources>

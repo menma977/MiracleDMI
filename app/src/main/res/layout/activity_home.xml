@@ -117,6 +117,19 @@
         android:layout_width="match_parent"
         android:layout_height="5dp"/>
 
+    <Button
+        android:layout_marginEnd="50dp"
+        android:textColor="@color/textSecondary"
+        android:background="@drawable/button_default_2"
+        android:text="@string/play"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonPlay"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="5dp"/>
+
     <LinearLayout
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"

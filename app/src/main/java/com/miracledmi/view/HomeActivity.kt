@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.miracledmi.R
 import com.miracledmi.config.Loading
 import com.miracledmi.model.Config
+import com.miracledmi.view.bot.BotActivity
 import java.util.*
 import kotlin.concurrent.schedule
 
@@ -20,7 +21,7 @@ class HomeActivity : AppCompatActivity() {
   private lateinit var withdrawAll: Button
   private lateinit var activeChart: Switch
   private lateinit var activeProgressBar: Switch
-
+  private lateinit var play : Button
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_home)
@@ -32,6 +33,7 @@ class HomeActivity : AppCompatActivity() {
     withdrawAll = findViewById(R.id.buttonWithdrawAll)
     activeChart = findViewById(R.id.switchActiveChart)
     activeProgressBar = findViewById(R.id.switchActiveProgressBar)
+    play = findViewById(R.id.buttonPlay)
 
     activeChart.isChecked = config.getBoolean("chart")
     activeProgressBar.isChecked = config.getBoolean("progressBar")
@@ -49,6 +51,18 @@ class HomeActivity : AppCompatActivity() {
       Timer().schedule(5000) {
         runOnUiThread {
           goTo = Intent(applicationContext, HomeActivity::class.java)
+          startActivity(goTo)
+          loading.closeDialog()
+          finish()
+        }
+      }
+    }
+
+    play.setOnClickListener {
+      loading.openDialog()
+      Timer().schedule(5000) {
+        runOnUiThread {
+          goTo = Intent(applicationContext, BotActivity::class.java)
           startActivity(goTo)
           loading.closeDialog()
           finish()
