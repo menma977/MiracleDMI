@@ -81,6 +81,7 @@
         android:layout_height="5dp"/>
 
     <LinearLayout
+        android:id="@+id/linearLayoutRefreshBalance"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
         android:layout_marginStart="10dp"
@@ -109,7 +110,9 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:id="@+id/textViewBalance"
-          android:layout_weight="1"/>
+          android:layout_weight="1"
+          android:drawableEnd="@drawable/ic_sync"
+          android:drawablePadding="10dp"/>
 
     </LinearLayout>
 
@@ -131,6 +134,7 @@
         android:layout_height="5dp"/>
 
     <LinearLayout
+        android:id="@+id/linearLayoutWithdrawContent"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
         android:layout_marginStart="10dp"
@@ -266,7 +270,20 @@
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="20dp"/>
+        android:layout_height="10dp"/>
+
+    <Button
+        android:layout_margin="10dp"
+        android:background="@drawable/button_danger"
+        android:textColor="@color/textSecondary"
+        android:text="@string/logout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonLogout"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="10dp"/>
 
   </LinearLayout>
 

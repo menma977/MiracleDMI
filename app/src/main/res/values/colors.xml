@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <color name="backgroundColor">#e3f1e4</color>
-  <color name="backgroundColorLoading">#31E3F1E4</color>
+  <color name="backgroundColorLoading">#57E3F1E4</color>
 
   <color name="colorPrimary">#00cc59</color>
   <color name="colorPrimaryLight">#5fff88</color>

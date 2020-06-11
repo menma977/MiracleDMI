@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,10 +10,13 @@
     tools:context=".view.MainActivity"
     android:background="@color/backgroundColorLoading">
 
-  <TextView
-      android:layout_width="wrap_content"
+  <ImageView
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="@string/logo"/>
+      android:minHeight="300dp"
+      app:srcCompat="@mipmap/ic_launcher_foreground"
+      android:contentDescription="@string/logo"
+      android:scaleType="fitCenter"/>
 
   <Space
       android:layout_width="match_parent"
