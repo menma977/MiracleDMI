@@ -12,11 +12,13 @@ import okhttp3.Response
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.util.concurrent.TimeUnit
 
 class WebController(private var body: HashMap<String, String>) : AsyncTask<Void, Void, JSONObject>() {
   override fun doInBackground(vararg params: Void?): JSONObject {
     return try {
-      val client = OkHttpClient()
+      val client = OkHttpClient.Builder().connectTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build()
       val mediaType: MediaType = "application/x-www-form-urlencoded".toMediaType()
       val body = MapToJason().map(body).toRequestBody(mediaType)
       val request: Request = Request.Builder().url(Url.web()).post(body).build()

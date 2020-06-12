@@ -25,6 +25,7 @@ class DogeController(private var body: HashMap<String, String>) : AsyncTask<Void
         val input = BufferedReader(InputStreamReader(response.body!!.byteStream()))
         val inputData: String = input.readLine()
         val convertJSON = JSONObject(inputData)
+        println(convertJSON)
         when {
           convertJSON.toString().contains("ChanceTooHigh") -> {
             JSONObject().put("code", 500).put("data", "Chance Too High")
