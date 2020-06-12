@@ -109,6 +109,7 @@ class BotActivity : AppCompatActivity() {
           seed = response.getJSONObject("data")["Next"].toString()
           payOut = response.getJSONObject("data")["PayOut"].toString().toBigDecimal()
           balanceRemaining = response.getJSONObject("data")["StartingBalance"].toString().toBigDecimal()
+          println("jajal : ${payOut - payIn}")
           payIn = valueFormat.dogeToDecimal(valueFormat.decimalToDoge(balanceRemaining * BigDecimal(0.001)))
           profit = payOut - payIn
           loseBot = profit < BigDecimal(0)
@@ -140,7 +141,7 @@ class BotActivity : AppCompatActivity() {
             cubicLineChart.refreshDrawableState()
           }
           rowChart++
-          if (rowChart <= 30) {
+          if (rowChart <= 10) {
             println("Proces $rowChart = ${balanceRemaining + profit} = re : $balanceRemaining")
           } else {
             println("hasil : ${balanceRemaining + profit} - ${valueFormat.decimalToDoge(balanceRemaining + profit)}")
@@ -161,13 +162,8 @@ class BotActivity : AppCompatActivity() {
   }
 
   private fun progress(start: BigDecimal, remaining: BigDecimal, end: BigDecimal) {
-    println("=============Progress Bar===============")
-    println(valueFormat.decimalToDoge(start).setScale(0).toInt())
-    println(valueFormat.decimalToDoge(remaining).setScale(0).toInt())
-    println(valueFormat.decimalToDoge(end).setScale(0).toInt())
-    println("=============Progress Bar===============")
-    progressBar.min = valueFormat.decimalToDoge(start).setScale(0).toInt()
-    progressBar.progress = valueFormat.decimalToDoge(remaining).setScale(0).toInt()
-    progressBar.max = valueFormat.decimalToDoge(end).setScale(0).toInt()
+    progressBar.min = valueFormat.decimalToDoge(start).setScale(0, BigDecimal.ROUND_HALF_DOWN).toPlainString().toInt()
+    progressBar.progress = valueFormat.decimalToDoge(remaining).setScale(0, BigDecimal.ROUND_HALF_DOWN).toPlainString().toInt()
+    progressBar.max = valueFormat.decimalToDoge(end).setScale(0, BigDecimal.ROUND_HALF_DOWN).toPlainString().toInt()
   }
 }
