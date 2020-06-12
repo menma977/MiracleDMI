@@ -101,7 +101,7 @@ class LoginActivity : AppCompatActivity() {
           user.setString("usernameWeb", username)
           user.setString("wallet", response.getJSONObject("data")["walletdepo"].toString())
           user.setString("walletWithdraw", response.getJSONObject("data")["walletwdall"].toString())
-          user.setString("maxdepo", response.getJSONObject("data")["maxdepo"].toString())
+          user.setString("limitDeposit", response.getJSONObject("data")["maxdepo"].toString())
           user.setString("username", response.getJSONObject("data")["userdoge"].toString())
           user.setString("password", response.getJSONObject("data")["passdoge"].toString())
           loginDoge(user.getString("username"), user.getString("password"))
@@ -156,11 +156,16 @@ class LoginActivity : AppCompatActivity() {
         this,
         Manifest.permission.READ_EXTERNAL_STORAGE
       ) != PackageManager.PERMISSION_GRANTED
+      || ContextCompat.checkSelfPermission(
+        this,
+        Manifest.permission.WAKE_LOCK
+      ) != PackageManager.PERMISSION_GRANTED
     ) {
       requestPermissions(
         arrayOf(
           Manifest.permission.WRITE_EXTERNAL_STORAGE,
-          Manifest.permission.READ_EXTERNAL_STORAGE
+          Manifest.permission.READ_EXTERNAL_STORAGE,
+          Manifest.permission.WAKE_LOCK
         ), 100
       )
     }

@@ -3,19 +3,22 @@ package com.miracledmi.view.bot
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import com.miracledmi.R
 import com.miracledmi.config.Loading
 import com.miracledmi.config.ValueFormat
 import com.miracledmi.controller.DogeController
 import com.miracledmi.model.User
+import okhttp3.internal.wait
 import org.eazegraph.lib.charts.ValueLineChart
 import org.eazegraph.lib.models.ValueLinePoint
 import org.eazegraph.lib.models.ValueLineSeries
 import org.json.JSONObject
 import java.math.BigDecimal
+import java.util.*
+import kotlin.collections.HashMap
 
 class BotActivity : AppCompatActivity() {
   private lateinit var cubicLineChart: ValueLineChart
@@ -45,6 +48,7 @@ class BotActivity : AppCompatActivity() {
   private var balanceLimitTargetLow = BigDecimal(0.4)
   private var formula = 1
   private var seed = (0..99999).random().toString()
+  private var thread = Thread()
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_bot)
@@ -65,14 +69,8 @@ class BotActivity : AppCompatActivity() {
     balance = intent.getSerializableExtra("balance").toString().toBigDecimal()
     balanceRemaining = balance
     balanceTarget = valueFormat.dogeToDecimal(valueFormat.decimalToDoge((balance * balanceLimitTarget) + balance))
-    payIn = valueFormat.dogeToDecimal(valueFormat.decimalToDoge(balance * BigDecimal(0.001)))
-    balanceLimitTargetLow = valueFormat.dogeToDecimal(balance * BigDecimal(0.4))
-
-    println(balance)
-    println(balanceRemaining)
-    println(balanceTarget)
-    println("${payIn} - ${payIn.toPlainString().length}")
-    println(balanceLimitTargetLow)
+    payIn = valueFormat.dogeToDecimal(valueFormat.decimalToDoge(balance) * BigDecimal(0.001))
+    balanceLimitTargetLow = valueFormat.dogeToDecimal(valueFormat.decimalToDoge(balance) * BigDecimal(0.4))
 
     balanceView.text = valueFormat.decimalToDoge(balance).toPlainString()
     balanceRemainingView.text = valueFormat.decimalToDoge(balanceRemaining).toPlainString()
@@ -80,75 +78,72 @@ class BotActivity : AppCompatActivity() {
     progress(balance, balanceRemaining, balanceTarget)
     configChart()
     loading.closeDialog()
-    val tared = Thread() {
+    thread = Thread() {
       onBotMode()
     }
-    tared.start()
-    //onBotMode()
+    thread.start()
   }
 
   private fun onBotMode() {
     var time = System.currentTimeMillis()
-    while (balanceRemaining <= balanceTarget || balanceRemaining > balanceLimitTargetLow) {
-      val delta = System.currentTimeMillis() - time
-      if (delta >= 2500) {
-        time = System.currentTimeMillis()
-        val body = HashMap<String, String>()
-        body["a"] = "PlaceBet"
-        body["s"] = user.getString("key")
-        body["Low"] = "0"
-        body["High"] = "940000"
-        body["PayIn"] = (payIn * formula.toBigDecimal()).toPlainString()
-        body["ProtocolVersion"] = "2"
-        body["ClientSeed"] = seed
-        body["Currency"] = "doge"
-        println(body)
-        response = DogeController(body).execute().get()
-        println(response)
-        if (response["code"] == 200) {
-          seed = response.getJSONObject("data")["Next"].toString()
-          payOut = response.getJSONObject("data")["PayOut"].toString().toBigDecimal()
-          balanceRemaining = response.getJSONObject("data")["StartingBalance"].toString().toBigDecimal()
-          println("jajal : ${payOut - payIn}")
-          payIn = valueFormat.dogeToDecimal(valueFormat.decimalToDoge(balanceRemaining * BigDecimal(0.001)))
-          profit = payOut - payIn
-          loseBot = profit < BigDecimal(0)
-          println("========================================")
-          println("payOut $payOut ${payOut.toString().length}")
-          println("balanceRemaining $balanceRemaining ${balanceRemaining.toString().length}")
-          println("payIn $payIn ${payIn.toString().length}")
-          println("profit $profit ${profit.toString().length}")
-          println(loseBot)
-          if (loseBot) {
-            formula += 19
-          } else {
-            if (formula == 1) {
-              formula = 1
+    val trigger = Object()
+    synchronized(trigger) {
+      while (balanceRemaining <= balanceTarget && balanceRemaining > balanceLimitTargetLow) {
+        val delta = System.currentTimeMillis() - time
+        if (delta >= 2500) {
+          time = System.currentTimeMillis()
+          payIn *= formula.toBigDecimal()
+          val body = HashMap<String, String>()
+          body["a"] = "PlaceBet"
+          body["s"] = user.getString("key")
+          body["Low"] = "0"
+          body["High"] = "940000"
+          body["PayIn"] = payIn.toPlainString()
+          body["ProtocolVersion"] = "2"
+          body["ClientSeed"] = seed
+          body["Currency"] = "doge"
+          response = DogeController(body).execute().get()
+          if (response["code"] == 200) {
+            seed = response.getJSONObject("data")["Next"].toString()
+            payOut = response.getJSONObject("data")["PayOut"].toString().toBigDecimal()
+            balanceRemaining = response.getJSONObject("data")["StartingBalance"].toString().toBigDecimal()
+            profit = payOut - payIn
+            balanceRemaining += profit
+            loseBot = profit < BigDecimal(0)
+            payIn = valueFormat.dogeToDecimal(valueFormat.decimalToDoge(balanceRemaining) * BigDecimal(0.001))
+
+            if (loseBot) {
+              formula += 19
             } else {
-              formula -= 1
+              if (formula == 1) {
+                formula = 1
+              } else {
+                formula -= 1
+              }
             }
-          }
-          runOnUiThread {
-            balanceRemainingView.text = valueFormat.decimalToDoge(balanceRemaining).toPlainString()
-            progress(balance, balanceRemaining, balanceTarget)
-            if (rowChart >= 39) {
-              series.series.removeAt(0)
-              series.addPoint(ValueLinePoint("$rowChart", valueFormat.decimalToDoge(balanceRemaining).toFloat()))
-            } else {
-              series.addPoint(ValueLinePoint("$rowChart", valueFormat.decimalToDoge(balanceRemaining).toFloat()))
+            runOnUiThread {
+              balanceRemainingView.text = valueFormat.decimalToDoge(balanceRemaining).toPlainString()
+              progress(balance, balanceRemaining, balanceTarget)
+              if (rowChart >= 39) {
+                series.series.removeAt(0)
+                series.addPoint(ValueLinePoint("$rowChart", valueFormat.decimalToDoge(balanceRemaining).toFloat()))
+              } else {
+                series.addPoint(ValueLinePoint("$rowChart", valueFormat.decimalToDoge(balanceRemaining).toFloat()))
+              }
+              cubicLineChart.addSeries(series)
+              cubicLineChart.refreshDrawableState()
             }
-            cubicLineChart.addSeries(series)
-            cubicLineChart.refreshDrawableState()
-          }
-          rowChart++
-          if (rowChart <= 10) {
-            println("Proces $rowChart = ${balanceRemaining + profit} = re : $balanceRemaining")
+            rowChart++
           } else {
-            println("hasil : ${balanceRemaining + profit} - ${valueFormat.decimalToDoge(balanceRemaining + profit)}")
-            break
+            runOnUiThread {
+              balanceRemainingView.text = "sleep mode Active"
+              Toast.makeText(applicationContext, "sleep mode Active Wait to continue", Toast.LENGTH_LONG).show()
+            }
+            trigger.wait(60000)
           }
         }
       }
+      println("berhenti")
     }
   }
 
