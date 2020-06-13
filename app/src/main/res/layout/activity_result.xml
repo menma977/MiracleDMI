@@ -9,7 +9,6 @@
     tools:context=".view.ResultActivity">
 
   <TextView
-      android:text="@string/error"
       android:textColor="@color/textPrimary"
       android:textStyle="bold"
       android:textSize="24sp"

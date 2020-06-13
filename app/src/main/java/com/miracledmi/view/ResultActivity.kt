@@ -80,4 +80,10 @@ class ResultActivity : AppCompatActivity() {
       }
     }
   }
+
+  override fun onBackPressed() {
+    super.onBackPressed()
+    val goTo = Intent(this, MainActivity::class.java)
+    startActivity(goTo)
+  }
 }

@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_enabled="false">
-        <shape android:padding="10dp" android:shape="rectangle">
-            <solid android:color="@color/DangerClick" />
-            <!-- this one is ths color of the Rounded Button -->
-            <corners android:radius="10dp" />
-        </shape>
-    </item>
-    <item android:state_pressed="true">
-        <shape android:shape="rectangle" android:padding="10dp">
-            <solid android:color="@color/DangerClick"/>
-            <!-- this one is ths color of the Rounded Button -->
-            <corners android:radius="10dp"/>
-        </shape>
-    </item>
-    <item>
-        <shape android:shape="rectangle" android:padding="10dp">
-            <solid android:color="@color/Danger"/>
-            <!-- this one is ths color of the Rounded Button -->
-            <corners android:radius="10dp"/>
-        </shape>
-    </item>
+  <item android:state_enabled="false">
+    <shape android:padding="10dp" android:shape="rectangle">
+      <solid android:color="@color/DangerClick"/>
+      <!-- this one is ths color of the Rounded Button -->
+      <corners android:topLeftRadius="20dp" android:bottomLeftRadius="20dp"/>
+    </shape>
+  </item>
+  <item android:state_pressed="true">
+    <shape android:shape="rectangle" android:padding="10dp">
+      <solid android:color="@color/DangerClick"/>
+      <!-- this one is ths color of the Rounded Button -->
+      <corners android:topLeftRadius="20dp" android:bottomLeftRadius="20dp"/>
+    </shape>
+  </item>
+  <item>
+    <shape android:shape="rectangle" android:padding="10dp">
+      <solid android:color="@color/Danger"/>
+      <!-- this one is ths color of the Rounded Button -->
+      <corners android:topLeftRadius="20dp" android:bottomLeftRadius="20dp"/>
+    </shape>
+  </item>
 </selector>

@@ -10,7 +10,7 @@ android {
         applicationId "com.miracledmi"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 15
+        versionCode 17
         versionName "0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

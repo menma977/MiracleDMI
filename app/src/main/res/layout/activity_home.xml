@@ -32,10 +32,10 @@
           android:textColor="@color/textSecondary"
           android:background="@drawable/button_default_2"
           android:text="@string/copy"
-          android:layout_width="50dp"
+          android:layout_width="100dp"
           android:layout_height="wrap_content"
           android:id="@+id/buttonCopy"
-          android:layout_weight="0.1"/>
+          android:layout_weight="0.2"/>
 
     </LinearLayout>
 
@@ -58,6 +58,7 @@
         android:layout_height="wrap_content">
 
       <TextView
+          android:textStyle="bold"
           android:text="@string/username"
           android:textColor="@color/textPrimary"
           android:gravity="start"
@@ -96,6 +97,7 @@
         android:layout_height="wrap_content">
 
       <TextView
+          android:textStyle="bold"
           android:text="@string/balance"
           android:textColor="@color/textPrimary"
           android:gravity="start"
@@ -140,6 +142,7 @@
           android:layout_weight="1">
 
         <TextView
+            android:textStyle="bold"
             android:gravity="center"
             android:text="@string/minimum_deposit"
             android:textColor="@color/textPrimary"
@@ -166,6 +169,7 @@
           android:layout_weight="1">
 
         <TextView
+            android:textStyle="bold"
             android:gravity="center"
             android:text="@string/maximum_deposit"
             android:textColor="@color/textPrimary"
@@ -193,7 +197,8 @@
         android:layout_height="5dp"/>
 
     <Button
-        android:layout_marginEnd="50dp"
+        android:elevation="10dp"
+        android:layout_marginEnd="100dp"
         android:textColor="@color/textSecondary"
         android:background="@drawable/button_default_2"
         android:text="@string/play"
@@ -256,6 +261,7 @@
         android:layout_height="wrap_content">
 
       <Switch
+          android:textStyle="bold"
           android:text="@string/activate_chart"
           android:textColor="@color/textPrimary"
           android:layout_width="match_parent"
@@ -268,6 +274,7 @@
           android:layout_height="5dp"/>
 
       <Switch
+          android:textStyle="bold"
           android:text="@string/activate_progress_bar"
           android:textColor="@color/textPrimary"
           android:layout_width="match_parent"
@@ -315,6 +322,7 @@
         android:layout_height="wrap_content">
 
       <TextView
+          android:textStyle="bold"
           android:text="@string/welcome"
           android:textColor="@color/textPrimary"
           android:layout_width="match_parent"
@@ -346,7 +354,8 @@
         android:layout_height="10dp"/>
 
     <Button
-        android:layout_margin="10dp"
+        android:elevation="10dp"
+        android:layout_marginStart="100dp"
         android:background="@drawable/button_danger"
         android:textColor="@color/textSecondary"
         android:text="@string/logout"

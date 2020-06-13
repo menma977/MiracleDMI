@@ -64,7 +64,7 @@ class BotProgressBarGoneActivity : AppCompatActivity() {
     loading.openDialog()
     balance = intent.getSerializableExtra("balance").toString().toBigDecimal()
     balanceRemaining = balance
-    balanceTarget = valueFormat.dogeToDecimal(valueFormat.decimalToDoge((balance * balanceLimitTarget) + valueFormat.decimalToDoge(balance)))
+    balanceTarget = valueFormat.dogeToDecimal(valueFormat.decimalToDoge((balance * balanceLimitTarget) + balance))
     payIn = valueFormat.dogeToDecimal(valueFormat.decimalToDoge(balance) * BigDecimal(0.001))
     balanceLimitTargetLow = valueFormat.dogeToDecimal(valueFormat.decimalToDoge(balance) * BigDecimal(0.4))
 
@@ -107,10 +107,13 @@ class BotProgressBarGoneActivity : AppCompatActivity() {
             loseBot = profit < BigDecimal(0)
             payIn = valueFormat.dogeToDecimal(valueFormat.decimalToDoge(balanceRemaining) * BigDecimal(0.001))
 
-            formula = if (loseBot) {
-              2
-            } else {
-              1
+            when {
+              loseBot -> {
+                formula *= 2
+              }
+              else -> {
+                formula = 1
+              }
             }
 
             runOnUiThread {
@@ -145,13 +148,15 @@ class BotProgressBarGoneActivity : AppCompatActivity() {
           finish()
         }
       } else {
-        goTo = Intent(applicationContext, ResultActivity::class.java)
-        goTo.putExtra("status", "CUT LOSS")
-        goTo.putExtra("startBalance", balance)
-        goTo.putExtra("endBalance", balanceRemaining)
-        goTo.putExtra("uniqueCode", intent.getSerializableExtra("uniqueCode").toString())
-        startActivity(goTo)
-        finish()
+        runOnUiThread {
+          goTo = Intent(applicationContext, ResultActivity::class.java)
+          goTo.putExtra("status", "CUT LOSS")
+          goTo.putExtra("startBalance", balance)
+          goTo.putExtra("endBalance", balanceRemaining)
+          goTo.putExtra("uniqueCode", intent.getSerializableExtra("uniqueCode").toString())
+          startActivity(goTo)
+          finish()
+        }
       }
     }
   }

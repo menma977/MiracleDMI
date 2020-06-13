@@ -1,5 +1,8 @@
 package com.miracledmi.view
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.*
@@ -30,6 +33,8 @@ class HomeActivity : AppCompatActivity() {
   private lateinit var response: JSONObject
   private lateinit var balanceValue: BigDecimal
   private lateinit var valueFormat: ValueFormat
+  private lateinit var clipboardManager: ClipboardManager
+  private lateinit var clipData: ClipData
 
   private lateinit var copy: Button
   private lateinit var withdrawAll: Button
@@ -80,6 +85,13 @@ class HomeActivity : AppCompatActivity() {
       config.setBoolean("progressBar", isChecked)
     }
 
+    copy.setOnClickListener {
+      clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+      clipData = ClipData.newPlainText("Wallet", wallet.text.toString())
+      clipboardManager.primaryClip = clipData
+      Toast.makeText(applicationContext, "Doge wallet has been copied", Toast.LENGTH_LONG).show()
+    }
+
     withdrawAll.setOnClickListener {
       loading.openDialog()
       withdraw()
@@ -127,7 +139,7 @@ class HomeActivity : AppCompatActivity() {
       if (response["code"] == 200) {
         balanceValue = response.getJSONObject("data")["Balance"].toString().toBigDecimal()
         val balanceLimit = valueFormat.dogeToDecimal(user.getString("limitDeposit").toBigDecimal())
-        if (balanceValue > BigDecimal(0) && balanceValue < balanceLimit) {
+        if (valueFormat.decimalToDoge(balanceValue) >= BigDecimal(1000) && balanceValue < balanceLimit) {
           runOnUiThread {
             withdrawContent.visibility = LinearLayout.GONE
             play.isEnabled = true
@@ -173,7 +185,7 @@ class HomeActivity : AppCompatActivity() {
       response = WebController(body).execute().get()
       try {
         if (response["code"] == 200) {
-          if (response.getJSONObject("data")["Status"] == 0) {
+          if (response.getJSONObject("data")["Status"] == "0") {
             if (response.getJSONObject("data")["main"] == true) {
               val oldBalanceData = BigDecimal(response.getJSONObject("data")["saldoawalmain"].toString(), MathContext.DECIMAL32)
               uniqueCode = response.getJSONObject("data")["notrxlama"].toString()
@@ -185,13 +197,13 @@ class HomeActivity : AppCompatActivity() {
                   goTo.putExtra("status", "CUT LOSS")
                   goTo.putExtra("uniqueCode", uniqueCode)
                   goTo.putExtra("balanceStart", balanceValue)
-                  goTo.putExtra("balanceEnd", valueFormat.decimalToDoge(oldBalanceData))
+                  goTo.putExtra("balanceEnd", valueFormat.dogeToDecimal(oldBalanceData))
                 } else {
                   goTo.putExtra("type", 1)
                   goTo.putExtra("status", "WIN")
                   goTo.putExtra("uniqueCode", uniqueCode)
                   goTo.putExtra("balanceStart", balanceValue)
-                  goTo.putExtra("balanceEnd", valueFormat.decimalToDoge(oldBalanceData))
+                  goTo.putExtra("balanceEnd", valueFormat.dogeToDecimal(oldBalanceData))
                 }
                 startActivity(goTo)
                 finish()
@@ -200,7 +212,7 @@ class HomeActivity : AppCompatActivity() {
             } else {
               if (balanceValue < valueFormat.decimalToDoge(BigDecimal(10000))) {
                 runOnUiThread {
-                  Toast.makeText(applicationContext, "Your Doge Balance must more then 10000", Toast.LENGTH_LONG).show()
+                  Toast.makeText(applicationContext, "Saldo Doge Anda harus lebih dari 10000 DOGE", Toast.LENGTH_LONG).show()
                   loading.closeDialog()
                 }
               } else {
@@ -210,6 +222,7 @@ class HomeActivity : AppCompatActivity() {
                     goTo.putExtra("uniqueCode", uniqueCode)
                     goTo.putExtra("balance", balanceValue)
                     startActivity(goTo)
+                    finish()
                     loading.closeDialog()
                   }
                 } else if (activeChart.isChecked) {
@@ -218,6 +231,7 @@ class HomeActivity : AppCompatActivity() {
                     goTo.putExtra("uniqueCode", uniqueCode)
                     goTo.putExtra("balance", balanceValue)
                     startActivity(goTo)
+                    finish()
                     loading.closeDialog()
                   }
                 } else if (activeProgressBar.isChecked) {
@@ -226,6 +240,7 @@ class HomeActivity : AppCompatActivity() {
                     goTo.putExtra("uniqueCode", uniqueCode)
                     goTo.putExtra("balance", balanceValue)
                     startActivity(goTo)
+                    finish()
                     loading.closeDialog()
                   }
                 } else {
@@ -234,25 +249,33 @@ class HomeActivity : AppCompatActivity() {
                     goTo.putExtra("uniqueCode", uniqueCode)
                     goTo.putExtra("balance", balanceValue)
                     startActivity(goTo)
+                    finish()
                     loading.closeDialog()
                   }
                 }
               }
             }
           } else {
-            Toast.makeText(applicationContext, "One day trading is only allowed once", Toast.LENGTH_LONG).show()
-            loading.closeDialog()
+            runOnUiThread {
+              Toast.makeText(applicationContext, "Perdagangan satu hari hanya diperbolehkan satu kali", Toast.LENGTH_LONG).show()
+              loading.closeDialog()
+            }
           }
         } else {
-          Toast.makeText(
-            applicationContext,
-            "Your connection is not stable to do the robot process. find a place that is more likely to run the robot",
-            Toast.LENGTH_LONG
-          ).show()
-          loading.closeDialog()
+          runOnUiThread {
+            Toast.makeText(
+              applicationContext,
+              response["data"].toString(),
+              Toast.LENGTH_LONG
+            ).show()
+            loading.closeDialog()
+          }
         }
       } catch (e: Exception) {
+        e.printStackTrace()
+        println("5")
         runOnUiThread {
+          loading.closeDialog()
           Toast.makeText(applicationContext, e.message, Toast.LENGTH_LONG).show()
         }
       }
