@@ -38,6 +38,8 @@ class HomeActivity : AppCompatActivity() {
   private lateinit var play: Button
   private lateinit var logout: Button
   private lateinit var wallet: TextView
+  private lateinit var username: TextView
+  private lateinit var maxDeposit: TextView
   private lateinit var balance: TextView
   private lateinit var refreshBalance: LinearLayout
   private lateinit var withdrawContent: LinearLayout
@@ -57,9 +59,15 @@ class HomeActivity : AppCompatActivity() {
     play = findViewById(R.id.buttonPlay)
     logout = findViewById(R.id.buttonLogout)
     wallet = findViewById(R.id.textViewWallet)
+    username = findViewById(R.id.textViewUsername)
+    maxDeposit = findViewById(R.id.textViewMaxDeposit)
     balance = findViewById(R.id.textViewBalance)
     refreshBalance = findViewById(R.id.linearLayoutRefreshBalance)
     withdrawContent = findViewById(R.id.linearLayoutWithdrawContent)
+
+    wallet.text = user.getString("wallet")
+    username.text = user.getString("usernameWeb")
+    maxDeposit.text = "${user.getString("limitDeposit")} DOGE"
 
     activeChart.isChecked = config.getBoolean("chart")
     activeProgressBar.isChecked = config.getBoolean("progressBar")
@@ -79,13 +87,7 @@ class HomeActivity : AppCompatActivity() {
 
     play.setOnClickListener {
       loading.openDialog()
-//      startBot()
-      var uniqueCode = UUID.randomUUID().toString()
-      goTo = Intent(applicationContext, BotActivity::class.java)
-      goTo.putExtra("uniqueCode", uniqueCode)
-      goTo.putExtra("balance", balanceValue)
-      startActivity(goTo)
-      loading.closeDialog()
+      startBot()
     }
 
     refreshBalance.setOnClickListener {

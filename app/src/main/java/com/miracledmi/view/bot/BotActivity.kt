@@ -1,24 +1,22 @@
 package com.miracledmi.view.bot
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.miracledmi.R
 import com.miracledmi.config.Loading
 import com.miracledmi.config.ValueFormat
 import com.miracledmi.controller.DogeController
 import com.miracledmi.model.User
-import okhttp3.internal.wait
+import com.miracledmi.view.ResultActivity
 import org.eazegraph.lib.charts.ValueLineChart
 import org.eazegraph.lib.models.ValueLinePoint
 import org.eazegraph.lib.models.ValueLineSeries
 import org.json.JSONObject
 import java.math.BigDecimal
-import java.util.*
-import kotlin.collections.HashMap
 
 class BotActivity : AppCompatActivity() {
   private lateinit var cubicLineChart: ValueLineChart
@@ -68,7 +66,7 @@ class BotActivity : AppCompatActivity() {
     loading.openDialog()
     balance = intent.getSerializableExtra("balance").toString().toBigDecimal()
     balanceRemaining = balance
-    balanceTarget = valueFormat.dogeToDecimal(valueFormat.decimalToDoge((balance * balanceLimitTarget) + balance))
+    balanceTarget = valueFormat.dogeToDecimal(valueFormat.decimalToDoge((balance * balanceLimitTarget) + valueFormat.decimalToDoge(balance)))
     payIn = valueFormat.dogeToDecimal(valueFormat.decimalToDoge(balance) * BigDecimal(0.001))
     balanceLimitTargetLow = valueFormat.dogeToDecimal(valueFormat.decimalToDoge(balance) * BigDecimal(0.4))
 
@@ -88,7 +86,7 @@ class BotActivity : AppCompatActivity() {
     var time = System.currentTimeMillis()
     val trigger = Object()
     synchronized(trigger) {
-      while (balanceRemaining <= balanceTarget && balanceRemaining > balanceLimitTargetLow) {
+      while (balanceRemaining in balanceLimitTargetLow..balanceTarget) {
         val delta = System.currentTimeMillis() - time
         if (delta >= 2500) {
           time = System.currentTimeMillis()
@@ -97,7 +95,7 @@ class BotActivity : AppCompatActivity() {
           body["a"] = "PlaceBet"
           body["s"] = user.getString("key")
           body["Low"] = "0"
-          body["High"] = "940000"
+          body["High"] = "500000"
           body["PayIn"] = payIn.toPlainString()
           body["ProtocolVersion"] = "2"
           body["ClientSeed"] = seed
@@ -112,15 +110,12 @@ class BotActivity : AppCompatActivity() {
             loseBot = profit < BigDecimal(0)
             payIn = valueFormat.dogeToDecimal(valueFormat.decimalToDoge(balanceRemaining) * BigDecimal(0.001))
 
-            if (loseBot) {
-              formula += 19
+            formula = if (loseBot) {
+              2
             } else {
-              if (formula == 1) {
-                formula = 1
-              } else {
-                formula -= 1
-              }
+              1
             }
+
             runOnUiThread {
               balanceRemainingView.text = valueFormat.decimalToDoge(balanceRemaining).toPlainString()
               progress(balance, balanceRemaining, balanceTarget)
@@ -143,7 +138,25 @@ class BotActivity : AppCompatActivity() {
           }
         }
       }
-      println("berhenti")
+      if (balanceRemaining >= balanceTarget) {
+        runOnUiThread {
+          goTo = Intent(applicationContext, ResultActivity::class.java)
+          goTo.putExtra("status", "WIN")
+          goTo.putExtra("startBalance", balance)
+          goTo.putExtra("endBalance", balanceRemaining)
+          goTo.putExtra("uniqueCode", intent.getSerializableExtra("uniqueCode").toString())
+          startActivity(goTo)
+          finish()
+        }
+      } else {
+        goTo = Intent(applicationContext, ResultActivity::class.java)
+        goTo.putExtra("status", "CUT LOSS")
+        goTo.putExtra("startBalance", balance)
+        goTo.putExtra("endBalance", balanceRemaining)
+        goTo.putExtra("uniqueCode", intent.getSerializableExtra("uniqueCode").toString())
+        startActivity(goTo)
+        finish()
+      }
     }
   }
 

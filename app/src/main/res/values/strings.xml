@@ -19,4 +19,7 @@
   <string name="play">Play</string>
   <string name="error">Error 404</string>
   <string name="logout">Logout</string>
+  <string name="minimum_deposit">Minimum Deposit</string>
+  <string name="example_doge">10000.000000000 DOGE</string>
+  <string name="maximum_deposit">Maximum Deposit</string>
 </resources>
