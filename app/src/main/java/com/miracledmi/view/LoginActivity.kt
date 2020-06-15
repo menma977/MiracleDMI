@@ -42,8 +42,8 @@ class LoginActivity : AppCompatActivity() {
     username = findViewById(R.id.editTextUsername)
     password = findViewById(R.id.editTextPassword)
     version = findViewById(R.id.textViewVersion)
-    username.setText("PLUCKY2")
-    password.setText("qwerty")
+//    username.setText("BEJO02")
+//    password.setText("bejo12345")
 
     doRequestPermission()
 

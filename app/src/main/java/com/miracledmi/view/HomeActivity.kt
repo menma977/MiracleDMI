@@ -48,6 +48,8 @@ class HomeActivity : AppCompatActivity() {
   private lateinit var balance: TextView
   private lateinit var refreshBalance: LinearLayout
   private lateinit var withdrawContent: LinearLayout
+
+  private var limitDepositDefault = BigDecimal(0.000000000, MathContext.DECIMAL32).setScale(8, BigDecimal.ROUND_HALF_DOWN)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_home)
@@ -72,7 +74,11 @@ class HomeActivity : AppCompatActivity() {
 
     wallet.text = user.getString("wallet")
     username.text = user.getString("usernameWeb")
-    maxDeposit.text = "${user.getString("limitDeposit")} DOGE"
+    if (user.getString("limitDeposit").isEmpty()) {
+      maxDeposit.text = "$limitDepositDefault DOGE"
+    } else {
+      maxDeposit.text = "${user.getString("limitDeposit")} DOGE"
+    }
 
     activeChart.isChecked = config.getBoolean("chart")
     activeProgressBar.isChecked = config.getBoolean("progressBar")
@@ -89,7 +95,7 @@ class HomeActivity : AppCompatActivity() {
       clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
       clipData = ClipData.newPlainText("Wallet", wallet.text.toString())
       clipboardManager.primaryClip = clipData
-      Toast.makeText(applicationContext, "Doge wallet has been copied", Toast.LENGTH_LONG).show()
+      Toast.makeText(applicationContext, "Dompet Doge telah disalin", Toast.LENGTH_LONG).show()
     }
 
     withdrawAll.setOnClickListener {
@@ -138,7 +144,11 @@ class HomeActivity : AppCompatActivity() {
       response = DogeController(body).execute().get()
       if (response["code"] == 200) {
         balanceValue = response.getJSONObject("data")["Balance"].toString().toBigDecimal()
-        val balanceLimit = valueFormat.dogeToDecimal(user.getString("limitDeposit").toBigDecimal())
+        val balanceLimit = if (user.getString("limitDeposit").isEmpty()) {
+          valueFormat.dogeToDecimal(limitDepositDefault)
+        } else {
+          valueFormat.dogeToDecimal(user.getString("limitDeposit").toBigDecimal())
+        }
         if (valueFormat.decimalToDoge(balanceValue) >= BigDecimal(1000) && balanceValue < balanceLimit) {
           runOnUiThread {
             withdrawContent.visibility = LinearLayout.GONE
@@ -150,14 +160,14 @@ class HomeActivity : AppCompatActivity() {
           runOnUiThread {
             withdrawContent.visibility = LinearLayout.VISIBLE
             play.isEnabled = false
-            balance.text = "${valueFormat.decimalToDoge(balanceValue).toPlainString()} DOGE"
+            balance.text = "${valueFormat.decimalToDoge(balanceValue).toPlainString()} DOGE terlalu tinggi"
             loading.closeDialog()
           }
         } else {
           runOnUiThread {
             withdrawContent.visibility = LinearLayout.GONE
             play.isEnabled = false
-            balance.text = "${valueFormat.decimalToDoge(balanceValue).toPlainString()} Doge too small"
+            balance.text = "${valueFormat.decimalToDoge(balanceValue).toPlainString()} DOGE terlalu kecil"
             loading.closeDialog()
           }
         }
@@ -293,7 +303,7 @@ class HomeActivity : AppCompatActivity() {
       response = DogeController(body).execute().get()
       if (response["code"] == 200) {
         runOnUiThread {
-          Toast.makeText(applicationContext, "The number of satoshis queued for withdrawal.", Toast.LENGTH_SHORT).show()
+          Toast.makeText(applicationContext, "Jumlah satoshi yang antri untuk ditarik.", Toast.LENGTH_SHORT).show()
           goTo = Intent(applicationContext, MainActivity::class.java)
           startActivity(goTo)
           finish()

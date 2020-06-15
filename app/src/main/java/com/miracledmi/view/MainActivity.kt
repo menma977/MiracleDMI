@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity() {
               timer.purge()
               user.clear()
               config.clear()
-              goTo = Intent(Intent.ACTION_VIEW, Uri.parse("https://netizenchar.com/download/app-release.apk"))
+              goTo = Intent(Intent.ACTION_VIEW, Uri.parse("https://netizenchar.com/download/miracleDMI.apk"))
               startActivity(goTo)
               finish()
             }

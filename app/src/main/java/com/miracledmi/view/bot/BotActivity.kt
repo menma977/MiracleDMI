@@ -42,8 +42,8 @@ class BotActivity : AppCompatActivity() {
 
   private var rowChart = 0
   private var loseBot = false
-  private var balanceLimitTarget = BigDecimal(0.05)
-  private var balanceLimitTargetLow = BigDecimal(0.4)
+  private var balanceLimitTarget = BigDecimal(0.06)
+  private var balanceLimitTargetLow = BigDecimal(0)
   private var formula = 1
   private var seed = (0..99999).random().toString()
   private var thread = Thread()
@@ -68,7 +68,7 @@ class BotActivity : AppCompatActivity() {
     balanceRemaining = balance
     balanceTarget = valueFormat.dogeToDecimal(valueFormat.decimalToDoge((balance * balanceLimitTarget) + balance))
     payIn = valueFormat.dogeToDecimal(valueFormat.decimalToDoge(balance) * BigDecimal(0.001))
-    balanceLimitTargetLow = valueFormat.dogeToDecimal(valueFormat.decimalToDoge(balance) * BigDecimal(0.4))
+    balanceLimitTargetLow = valueFormat.dogeToDecimal(valueFormat.decimalToDoge(balance) * balanceLimitTargetLow)
 
     balanceView.text = valueFormat.decimalToDoge(balance).toPlainString()
     balanceRemainingView.text = valueFormat.decimalToDoge(balanceRemaining).toPlainString()
@@ -88,7 +88,7 @@ class BotActivity : AppCompatActivity() {
     synchronized(trigger) {
       while (balanceRemaining in balanceLimitTargetLow..balanceTarget) {
         val delta = System.currentTimeMillis() - time
-        if (delta >= 2500) {
+        if (delta >= 1000) {
           time = System.currentTimeMillis()
           payIn *= formula.toBigDecimal()
           val body = HashMap<String, String>()
@@ -116,6 +116,7 @@ class BotActivity : AppCompatActivity() {
               }
               else -> {
                 formula = 1
+                payIn = valueFormat.dogeToDecimal(valueFormat.decimalToDoge(balance) * BigDecimal(0.001))
               }
             }
 
