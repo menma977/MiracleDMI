@@ -75,69 +75,77 @@ class BotProgressBarAndChartGoneActivity : AppCompatActivity() {
     synchronized(trigger) {
       while (balanceRemaining in balanceLimitTargetLow..balanceTarget) {
         val delta = System.currentTimeMillis() - time
-        if (delta >= 1000) {
-          time = System.currentTimeMillis()
-          payIn *= formula.toBigDecimal()
-          val body = HashMap<String, String>()
-          body["a"] = "PlaceBet"
-          body["s"] = user.getString("key")
-          body["Low"] = "0"
-          body["High"] = "500000"
-          body["PayIn"] = payIn.toPlainString()
-          body["ProtocolVersion"] = "2"
-          body["ClientSeed"] = seed
-          body["Currency"] = "doge"
-          response = DogeController(body).execute().get()
-          if (response["code"] == 200) {
-            seed = response.getJSONObject("data")["Next"].toString()
-            payOut = response.getJSONObject("data")["PayOut"].toString().toBigDecimal()
-            balanceRemaining = response.getJSONObject("data")["StartingBalance"].toString().toBigDecimal()
-            profit = payOut - payIn
-            balanceRemaining += profit
-            loseBot = profit < BigDecimal(0)
-            payIn = valueFormat.dogeToDecimal(valueFormat.decimalToDoge(balanceRemaining) * BigDecimal(0.001))
-
+        when {
+          delta >= 1000 -> {
+            time = System.currentTimeMillis()
+            payIn *= formula.toBigDecimal()
+            val body = HashMap<String, String>()
+            body["a"] = "PlaceBet"
+            body["s"] = user.getString("key")
+            body["Low"] = "0"
+            body["High"] = "500000"
+            body["PayIn"] = payIn.toPlainString()
+            body["ProtocolVersion"] = "2"
+            body["ClientSeed"] = seed
+            body["Currency"] = "doge"
+            response = DogeController(body).execute().get()
             when {
-              loseBot -> {
-                formula *= 2
+              response["code"] == 200 -> {
+                seed = response.getJSONObject("data")["Next"].toString()
+                payOut = response.getJSONObject("data")["PayOut"].toString().toBigDecimal()
+                balanceRemaining = response.getJSONObject("data")["StartingBalance"].toString().toBigDecimal()
+                profit = payOut - payIn
+                balanceRemaining += profit
+                loseBot = profit < BigDecimal(0)
+                payIn = valueFormat.dogeToDecimal(valueFormat.decimalToDoge(balanceRemaining) * BigDecimal(0.001))
+
+                when {
+                  loseBot -> {
+                    formula *= 2
+                  }
+                  else -> {
+                    formula = 1
+                    payIn = valueFormat.dogeToDecimal(valueFormat.decimalToDoge(balance) * BigDecimal(0.001))
+                  }
+                }
+
+                runOnUiThread {
+                  balanceRemainingView.text = valueFormat.decimalToDoge(balanceRemaining).toPlainString()
+                }
               }
               else -> {
-                formula = 1
-                payIn = valueFormat.dogeToDecimal(valueFormat.decimalToDoge(balance) * BigDecimal(0.001))
+                runOnUiThread {
+                  balanceRemainingView.text = "sleep mode Active"
+                  Toast.makeText(applicationContext, "sleep mode Active Wait to continue", Toast.LENGTH_LONG).show()
+                }
+                trigger.wait(60000)
               }
             }
-
-            runOnUiThread {
-              balanceRemainingView.text = valueFormat.decimalToDoge(balanceRemaining).toPlainString()
-            }
-          } else {
-            runOnUiThread {
-              balanceRemainingView.text = "sleep mode Active"
-              Toast.makeText(applicationContext, "sleep mode Active Wait to continue", Toast.LENGTH_LONG).show()
-            }
-            trigger.wait(60000)
           }
         }
       }
-      if (balanceRemaining >= balanceTarget) {
-        runOnUiThread {
-          goTo = Intent(applicationContext, ResultActivity::class.java)
-          goTo.putExtra("status", "WIN")
-          goTo.putExtra("startBalance", balance)
-          goTo.putExtra("endBalance", balanceRemaining)
-          goTo.putExtra("uniqueCode", intent.getSerializableExtra("uniqueCode").toString())
-          startActivity(goTo)
-          finish()
+      when {
+        balanceRemaining >= balanceTarget -> {
+          runOnUiThread {
+            goTo = Intent(applicationContext, ResultActivity::class.java)
+            goTo.putExtra("status", "WIN")
+            goTo.putExtra("startBalance", balance)
+            goTo.putExtra("endBalance", balanceRemaining)
+            goTo.putExtra("uniqueCode", intent.getSerializableExtra("uniqueCode").toString())
+            startActivity(goTo)
+            finish()
+          }
         }
-      } else {
-        runOnUiThread {
-          goTo = Intent(applicationContext, ResultActivity::class.java)
-          goTo.putExtra("status", "CUT LOSS")
-          goTo.putExtra("startBalance", balance)
-          goTo.putExtra("endBalance", balanceRemaining)
-          goTo.putExtra("uniqueCode", intent.getSerializableExtra("uniqueCode").toString())
-          startActivity(goTo)
-          finish()
+        else -> {
+          runOnUiThread {
+            goTo = Intent(applicationContext, ResultActivity::class.java)
+            goTo.putExtra("status", "CUT LOSS")
+            goTo.putExtra("startBalance", balance)
+            goTo.putExtra("endBalance", balanceRemaining)
+            goTo.putExtra("uniqueCode", intent.getSerializableExtra("uniqueCode").toString())
+            startActivity(goTo)
+            finish()
+          }
         }
       }
     }

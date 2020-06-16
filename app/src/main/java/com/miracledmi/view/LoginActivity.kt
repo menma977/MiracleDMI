@@ -96,24 +96,37 @@ class LoginActivity : AppCompatActivity() {
     body["ref"] = MD5().convert(username + password + "b0d0nk111179")
     Timer().schedule(1000) {
       response = WebController(body).execute().get()
-      if (response["code"] == 200 && response.getJSONObject("data")["Status"] == "0") {
-        runOnUiThread {
-          user.setString("usernameWeb", username)
-          user.setString("wallet", response.getJSONObject("data")["walletdepo"].toString())
-          user.setString("walletWithdraw", response.getJSONObject("data")["walletwdall"].toString())
-          user.setString("limitDeposit", response.getJSONObject("data")["maxdepo"].toString())
-          user.setString("username", response.getJSONObject("data")["userdoge"].toString())
-          user.setString("password", response.getJSONObject("data")["passdoge"].toString())
-          loginDoge(user.getString("username"), user.getString("password"))
-        }
-      } else {
-        runOnUiThread {
-          try {
-            Toast.makeText(applicationContext, response.getJSONObject("data")["Pesan"].toString(), Toast.LENGTH_SHORT).show()
-          } catch (e: Exception) {
-            Toast.makeText(applicationContext, response["data"].toString(), Toast.LENGTH_SHORT).show()
+      when {
+        response["code"] == 200 -> {
+          when {
+            response.getJSONObject("data")["Status"] == "0" -> {
+              runOnUiThread {
+                user.setString("usernameWeb", username)
+                user.setString("wallet", response.getJSONObject("data")["walletdepo"].toString())
+                user.setString("walletWithdraw", response.getJSONObject("data")["walletwdall"].toString())
+                user.setString("limitDeposit", response.getJSONObject("data")["maxdepo"].toString())
+                user.setString("username", response.getJSONObject("data")["userdoge"].toString())
+                user.setString("password", response.getJSONObject("data")["passdoge"].toString())
+                loginDoge(user.getString("username"), user.getString("password"))
+              }
+            }
+            else -> {
+              runOnUiThread {
+                Toast.makeText(applicationContext, response["data"].toString(), Toast.LENGTH_SHORT).show()
+                loading.closeDialog()
+              }
+            }
           }
-          loading.closeDialog()
+        }
+        else -> {
+          runOnUiThread {
+            try {
+              Toast.makeText(applicationContext, response.getJSONObject("data")["Pesan"].toString(), Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+              Toast.makeText(applicationContext, response["data"].toString(), Toast.LENGTH_SHORT).show()
+            }
+            loading.closeDialog()
+          }
         }
       }
     }
@@ -129,18 +142,21 @@ class LoginActivity : AppCompatActivity() {
     body["Totp"] = "''"
     Timer().schedule(1000) {
       response = DogeController(body).execute().get()
-      if (response["code"] == 200) {
-        runOnUiThread {
-          user.setString("key", response.getJSONObject("data")["SessionCookie"].toString())
-          goTo = Intent(applicationContext, HomeActivity::class.java)
-          startActivity(goTo)
-          finish()
-          loading.closeDialog()
+      when {
+        response["code"] == 200 -> {
+          runOnUiThread {
+            user.setString("key", response.getJSONObject("data")["SessionCookie"].toString())
+            goTo = Intent(applicationContext, HomeActivity::class.java)
+            startActivity(goTo)
+            finish()
+            loading.closeDialog()
+          }
         }
-      } else {
-        runOnUiThread {
-          Toast.makeText(applicationContext, response["data"].toString(), Toast.LENGTH_SHORT).show()
-          loading.closeDialog()
+        else -> {
+          runOnUiThread {
+            Toast.makeText(applicationContext, response["data"].toString(), Toast.LENGTH_SHORT).show()
+            loading.closeDialog()
+          }
         }
       }
     }

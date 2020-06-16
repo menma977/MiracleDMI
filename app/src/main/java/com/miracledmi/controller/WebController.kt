@@ -23,17 +23,23 @@ class WebController(private var body: HashMap<String, String>) : AsyncTask<Void,
       val body = MapToJason().map(body).toRequestBody(mediaType)
       val request: Request = Request.Builder().url(Url.web()).post(body).build()
       val response: Response = client.newCall(request).execute()
-      return if (response.isSuccessful) {
-        val input = BufferedReader(InputStreamReader(response.body!!.byteStream()))
-        val inputData: String = input.readLine()
-        val convertJSON = JSONObject(inputData)
-        if (convertJSON["Status"] == "1") {
-          JSONObject().put("code", 500).put("data", convertJSON["Pesan"])
-        } else {
-          JSONObject().put("code", 200).put("data", convertJSON)
+      return when {
+        response.isSuccessful -> {
+          val input = BufferedReader(InputStreamReader(response.body!!.byteStream()))
+          val inputData: String = input.readLine()
+          val convertJSON = JSONObject(inputData)
+          when {
+            convertJSON["Status"] == "1" -> {
+              JSONObject().put("code", 500).put("data", convertJSON["Pesan"])
+            }
+            else -> {
+              JSONObject().put("code", 200).put("data", convertJSON)
+            }
+          }
         }
-      } else {
-        JSONObject().put("code", 500).put("data", "Unstable connection / Response Not found")
+        else -> {
+          JSONObject().put("code", 500).put("data", "Unstable connection / Response Not found")
+        }
       }
     } catch (e: Exception) {
       JSONObject().put("code", 500).put("data", e.message)

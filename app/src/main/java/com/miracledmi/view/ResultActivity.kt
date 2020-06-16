@@ -21,11 +21,11 @@ class ResultActivity : AppCompatActivity() {
   private lateinit var user: User
   private lateinit var loading: Loading
   private lateinit var goTo: Intent
-  private lateinit var status : TextView
+  private lateinit var status: TextView
   private lateinit var valueFormat: ValueFormat
 
-  private lateinit var uniqueCode : String
-  private lateinit var startBalance : BigDecimal
+  private lateinit var uniqueCode: String
+  private lateinit var startBalance: BigDecimal
   private lateinit var response: JSONObject
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -59,21 +59,27 @@ class ResultActivity : AppCompatActivity() {
       )
       response = WebController(body).execute().get()
       try {
-        if (response["code"] == 200) {
-          if (response.getJSONObject("data")["Status"].toString() == "0") {
-            status.text = response.getJSONObject("data")["profit"].toString()
-            loading.closeDialog()
-          } else {
-            goTo = Intent(applicationContext, MainActivity::class.java)
-            startActivity(goTo)
-            finish()
+        when {
+          response["code"] == 200 -> {
+            when {
+              response.getJSONObject("data")["Status"].toString() == "0" -> {
+                status.text = response.getJSONObject("data")["profit"].toString()
+                loading.closeDialog()
+              }
+              else -> {
+                goTo = Intent(applicationContext, MainActivity::class.java)
+                startActivity(goTo)
+                finish()
+                loading.closeDialog()
+              }
+            }
+          }
+          else -> {
+            status.text = response["response"].toString()
             loading.closeDialog()
           }
-        } else {
-          status.text = response["response"].toString()
-          loading.closeDialog()
         }
-      }catch (e: Exception) {
+      } catch (e: Exception) {
         runOnUiThread {
           Toast.makeText(applicationContext, e.message, Toast.LENGTH_LONG).show()
         }
