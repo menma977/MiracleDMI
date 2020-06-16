@@ -158,7 +158,7 @@ class HomeActivity : AppCompatActivity() {
             }
           }
           when {
-            valueFormat.decimalToDoge(balanceValue) >= BigDecimal(1000) && balanceValue < balanceLimit -> {
+            valueFormat.decimalToDoge(balanceValue) >= BigDecimal(10000) && balanceValue < balanceLimit -> {
               runOnUiThread {
                 withdrawContent.visibility = LinearLayout.GONE
                 play.isEnabled = true
