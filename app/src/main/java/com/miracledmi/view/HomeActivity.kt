@@ -208,111 +208,91 @@ class HomeActivity : AppCompatActivity() {
     Timer().schedule(1000) {
       response = WebController(body).execute().get()
       try {
-        when {
-          response["code"] == 200 -> {
-            when {
-              response.getJSONObject("data")["Status"] == "0" -> {
-                when {
-                  response.getJSONObject("data")["main"] == true -> {
-                    val oldBalanceData = BigDecimal(response.getJSONObject("data")["saldoawalmain"].toString(), MathContext.DECIMAL32)
-                    uniqueCode = response.getJSONObject("data")["notrxlama"].toString()
-                    val profit = balanceValue - valueFormat.decimalToDoge(oldBalanceData)
-                    runOnUiThread {
-                      goTo = Intent(applicationContext, ResultActivity::class.java)
-                      when {
-                        profit < BigDecimal(0) -> {
-                          goTo.putExtra("type", 0)
-                          goTo.putExtra("status", "CUT LOSS")
-                          goTo.putExtra("uniqueCode", uniqueCode)
-                          goTo.putExtra("balanceStart", balanceValue)
-                          goTo.putExtra("balanceEnd", valueFormat.dogeToDecimal(oldBalanceData))
-                        }
-                        else -> {
-                          goTo.putExtra("type", 1)
-                          goTo.putExtra("status", "WIN")
-                          goTo.putExtra("uniqueCode", uniqueCode)
-                          goTo.putExtra("balanceStart", balanceValue)
-                          goTo.putExtra("balanceEnd", valueFormat.dogeToDecimal(oldBalanceData))
-                        }
-                      }
-                      startActivity(goTo)
-                      finish()
-                      loading.closeDialog()
-                    }
-                  }
-                  else -> {
-                    when {
-                      balanceValue < valueFormat.decimalToDoge(BigDecimal(10000)) -> {
-                        runOnUiThread {
-                          Toast.makeText(applicationContext, "Saldo Doge Anda harus lebih dari 10000 DOGE", Toast.LENGTH_LONG).show()
-                          loading.closeDialog()
-                        }
-                      }
-                      else -> {
-                        when {
-                          activeChart.isChecked && activeProgressBar.isChecked -> {
-                            runOnUiThread {
-                              goTo = Intent(applicationContext, BotActivity::class.java)
-                              goTo.putExtra("uniqueCode", uniqueCode)
-                              goTo.putExtra("balance", balanceValue)
-                              startActivity(goTo)
-                              finish()
-                              loading.closeDialog()
-                            }
-                          }
-                          activeChart.isChecked -> {
-                            runOnUiThread {
-                              goTo = Intent(applicationContext, BotProgressBarGoneActivity::class.java)
-                              goTo.putExtra("uniqueCode", uniqueCode)
-                              goTo.putExtra("balance", balanceValue)
-                              startActivity(goTo)
-                              finish()
-                              loading.closeDialog()
-                            }
-                          }
-                          activeProgressBar.isChecked -> {
-                            runOnUiThread {
-                              goTo = Intent(applicationContext, BotChartGoneActivity::class.java)
-                              goTo.putExtra("uniqueCode", uniqueCode)
-                              goTo.putExtra("balance", balanceValue)
-                              startActivity(goTo)
-                              finish()
-                              loading.closeDialog()
-                            }
-                          }
-                          else -> {
-                            runOnUiThread {
-                              goTo = Intent(applicationContext, BotProgressBarAndChartGoneActivity::class.java)
-                              goTo.putExtra("uniqueCode", uniqueCode)
-                              goTo.putExtra("balance", balanceValue)
-                              startActivity(goTo)
-                              finish()
-                              loading.closeDialog()
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+        if (response["code"] == 200) {
+          if (response.getJSONObject("data")["Status"] == "0") {
+            if (response.getJSONObject("data")["main"] == true) {
+              val oldBalanceData = BigDecimal(response.getJSONObject("data")["saldoawalmain"].toString(), MathContext.DECIMAL32)
+              uniqueCode = response.getJSONObject("data")["notrxlama"].toString()
+              val profit = balanceValue - valueFormat.decimalToDoge(oldBalanceData)
+              runOnUiThread {
+                goTo = Intent(applicationContext, ResultActivity::class.java)
+                if (profit < BigDecimal(0)) {
+                  goTo.putExtra("type", 0)
+                  goTo.putExtra("status", "CUT LOSS")
+                  goTo.putExtra("uniqueCode", uniqueCode)
+                  goTo.putExtra("balanceStart", balanceValue)
+                  goTo.putExtra("balanceEnd", valueFormat.dogeToDecimal(oldBalanceData))
+                } else {
+                  goTo.putExtra("type", 1)
+                  goTo.putExtra("status", "WIN")
+                  goTo.putExtra("uniqueCode", uniqueCode)
+                  goTo.putExtra("balanceStart", balanceValue)
+                  goTo.putExtra("balanceEnd", valueFormat.dogeToDecimal(oldBalanceData))
                 }
+                startActivity(goTo)
+                finish()
+                loading.closeDialog()
               }
-              else -> {
+            } else {
+              if (balanceValue < valueFormat.decimalToDoge(BigDecimal(10000))) {
                 runOnUiThread {
-                  Toast.makeText(applicationContext, "Perdagangan satu hari hanya diperbolehkan satu kali", Toast.LENGTH_LONG).show()
+                  Toast.makeText(applicationContext, "Saldo Doge Anda harus lebih dari 10000 DOGE", Toast.LENGTH_LONG).show()
                   loading.closeDialog()
                 }
+              } else {
+                if (activeChart.isChecked && activeProgressBar.isChecked) {
+                  runOnUiThread {
+                    goTo = Intent(applicationContext, BotActivity::class.java)
+                    goTo.putExtra("uniqueCode", uniqueCode)
+                    goTo.putExtra("balance", balanceValue)
+                    startActivity(goTo)
+                    finish()
+                    loading.closeDialog()
+                  }
+                } else if (activeChart.isChecked) {
+                  runOnUiThread {
+                    goTo = Intent(applicationContext, BotProgressBarGoneActivity::class.java)
+                    goTo.putExtra("uniqueCode", uniqueCode)
+                    goTo.putExtra("balance", balanceValue)
+                    startActivity(goTo)
+                    finish()
+                    loading.closeDialog()
+                  }
+                } else if (activeProgressBar.isChecked) {
+                  runOnUiThread {
+                    goTo = Intent(applicationContext, BotChartGoneActivity::class.java)
+                    goTo.putExtra("uniqueCode", uniqueCode)
+                    goTo.putExtra("balance", balanceValue)
+                    startActivity(goTo)
+                    finish()
+                    loading.closeDialog()
+                  }
+                } else {
+                  runOnUiThread {
+                    goTo = Intent(applicationContext, BotProgressBarAndChartGoneActivity::class.java)
+                    goTo.putExtra("uniqueCode", uniqueCode)
+                    goTo.putExtra("balance", balanceValue)
+                    startActivity(goTo)
+                    finish()
+                    loading.closeDialog()
+                  }
+                }
               }
             }
-          }
-          else -> {
+          } else {
             runOnUiThread {
-              Toast.makeText(
-                applicationContext,
-                response["data"].toString(),
-                Toast.LENGTH_LONG
-              ).show()
+              Toast.makeText(applicationContext, "Perdagangan satu hari hanya diperbolehkan satu kali", Toast.LENGTH_LONG).show()
               loading.closeDialog()
             }
+          }
+        } else {
+          runOnUiThread {
+            Toast.makeText(
+              applicationContext,
+              response["data"].toString(),
+              Toast.LENGTH_LONG
+            ).show()
+            loading.closeDialog()
           }
         }
       } catch (e: Exception) {

@@ -267,7 +267,8 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:id="@+id/switchActiveChart"
-          android:showText="false"/>
+          android:showText="false"
+          android:checked="true"/>
 
       <Space
           android:layout_width="match_parent"

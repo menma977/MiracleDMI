@@ -15,6 +15,7 @@ import com.miracledmi.config.Loading
 import com.miracledmi.config.MD5
 import com.miracledmi.controller.DogeController
 import com.miracledmi.controller.WebController
+import com.miracledmi.model.Config
 import com.miracledmi.model.User
 import org.json.JSONObject
 import java.lang.Exception
@@ -26,6 +27,7 @@ class LoginActivity : AppCompatActivity() {
   private lateinit var loading: Loading
   private lateinit var user: User
   private lateinit var response: JSONObject
+  private lateinit var config: Config
 
   private lateinit var username: EditText
   private lateinit var password: EditText
@@ -37,13 +39,14 @@ class LoginActivity : AppCompatActivity() {
 
     loading = Loading(this)
     user = User(this)
+    config = Config(this)
 
     login = findViewById(R.id.buttonLogin)
     username = findViewById(R.id.editTextUsername)
     password = findViewById(R.id.editTextPassword)
     version = findViewById(R.id.textViewVersion)
-//    username.setText("BEJO02")
-//    password.setText("bejo12345")
+
+    config.setBoolean("chart", true)
 
     doRequestPermission()
 
@@ -96,37 +99,31 @@ class LoginActivity : AppCompatActivity() {
     body["ref"] = MD5().convert(username + password + "b0d0nk111179")
     Timer().schedule(1000) {
       response = WebController(body).execute().get()
-      when {
-        response["code"] == 200 -> {
-          when {
-            response.getJSONObject("data")["Status"] == "0" -> {
-              runOnUiThread {
-                user.setString("usernameWeb", username)
-                user.setString("wallet", response.getJSONObject("data")["walletdepo"].toString())
-                user.setString("walletWithdraw", response.getJSONObject("data")["walletwdall"].toString())
-                user.setString("limitDeposit", response.getJSONObject("data")["maxdepo"].toString())
-                user.setString("username", response.getJSONObject("data")["userdoge"].toString())
-                user.setString("password", response.getJSONObject("data")["passdoge"].toString())
-                loginDoge(user.getString("username"), user.getString("password"))
-              }
-            }
-            else -> {
-              runOnUiThread {
-                Toast.makeText(applicationContext, response["data"].toString(), Toast.LENGTH_SHORT).show()
-                loading.closeDialog()
-              }
-            }
-          }
-        }
-        else -> {
+      if (response["code"] == 200) {
+        if (response.getJSONObject("data")["Status"] == "0") {
           runOnUiThread {
-            try {
-              Toast.makeText(applicationContext, response.getJSONObject("data")["Pesan"].toString(), Toast.LENGTH_SHORT).show()
-            } catch (e: Exception) {
-              Toast.makeText(applicationContext, response["data"].toString(), Toast.LENGTH_SHORT).show()
-            }
+            user.setString("usernameWeb", username)
+            user.setString("wallet", response.getJSONObject("data")["walletdepo"].toString())
+            user.setString("walletWithdraw", response.getJSONObject("data")["walletwdall"].toString())
+            user.setString("limitDeposit", response.getJSONObject("data")["maxdepo"].toString())
+            user.setString("username", response.getJSONObject("data")["userdoge"].toString())
+            user.setString("password", response.getJSONObject("data")["passdoge"].toString())
+            loginDoge(user.getString("username"), user.getString("password"))
+          }
+        } else {
+          runOnUiThread {
+            Toast.makeText(applicationContext, response["data"].toString(), Toast.LENGTH_SHORT).show()
             loading.closeDialog()
           }
+        }
+      } else {
+        runOnUiThread {
+          try {
+            Toast.makeText(applicationContext, response.getJSONObject("data")["Pesan"].toString(), Toast.LENGTH_SHORT).show()
+          } catch (e: Exception) {
+            Toast.makeText(applicationContext, response["data"].toString(), Toast.LENGTH_SHORT).show()
+          }
+          loading.closeDialog()
         }
       }
     }
@@ -142,21 +139,19 @@ class LoginActivity : AppCompatActivity() {
     body["Totp"] = "''"
     Timer().schedule(1000) {
       response = DogeController(body).execute().get()
-      when {
-        response["code"] == 200 -> {
-          runOnUiThread {
-            user.setString("key", response.getJSONObject("data")["SessionCookie"].toString())
-            goTo = Intent(applicationContext, HomeActivity::class.java)
-            startActivity(goTo)
-            finish()
-            loading.closeDialog()
-          }
+      if (response["code"] == 200) {
+        runOnUiThread {
+          user.setString("key", response.getJSONObject("data")["SessionCookie"].toString())
+          goTo = Intent(applicationContext, HomeActivity::class.java)
+          startActivity(goTo)
+          finish()
+          loading.closeDialog()
         }
-        else -> {
-          runOnUiThread {
-            Toast.makeText(applicationContext, response["data"].toString(), Toast.LENGTH_SHORT).show()
-            loading.closeDialog()
-          }
+      }
+      else {
+        runOnUiThread {
+          Toast.makeText(applicationContext, response["data"].toString(), Toast.LENGTH_SHORT).show()
+          loading.closeDialog()
         }
       }
     }

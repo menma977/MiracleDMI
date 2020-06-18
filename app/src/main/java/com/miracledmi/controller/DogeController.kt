@@ -30,19 +30,19 @@ class DogeController(private var body: HashMap<String, String>) : AsyncTask<Void
           val convertJSON = JSONObject(inputData)
           when {
             convertJSON.toString().contains("ChanceTooHigh") -> {
-              JSONObject().put("code", 500).put("data", "Chance Too High")
+              JSONObject().put("code", 404).put("data", "Chance Too High")
             }
             convertJSON.toString().contains("ChanceTooLow") -> {
-              JSONObject().put("code", 500).put("data", "Chance Too Low")
+              JSONObject().put("code", 404).put("data", "Chance Too Low")
             }
             convertJSON.toString().contains("InsufficientFunds") -> {
-              JSONObject().put("code", 500).put("data", "Insufficient Funds")
+              JSONObject().put("code", 404).put("data", "Insufficient Funds")
             }
             convertJSON.toString().contains("NoPossibleProfit") -> {
-              JSONObject().put("code", 500).put("data", "No Possible Profit")
+              JSONObject().put("code", 404).put("data", "No Possible Profit")
             }
             convertJSON.toString().contains("MaxPayoutExceeded") -> {
-              JSONObject().put("code", 500).put("data", "Max Payout Exceeded")
+              JSONObject().put("code", 404).put("data", "Max Payout Exceeded")
             }
             convertJSON.toString().contains("error") -> {
               JSONObject().put("code", 500).put("data", "Invalid request")

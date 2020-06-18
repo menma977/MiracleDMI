@@ -59,25 +59,19 @@ class ResultActivity : AppCompatActivity() {
       )
       response = WebController(body).execute().get()
       try {
-        when {
-          response["code"] == 200 -> {
-            when {
-              response.getJSONObject("data")["Status"].toString() == "0" -> {
-                status.text = response.getJSONObject("data")["profit"].toString()
-                loading.closeDialog()
-              }
-              else -> {
-                goTo = Intent(applicationContext, MainActivity::class.java)
-                startActivity(goTo)
-                finish()
-                loading.closeDialog()
-              }
-            }
-          }
-          else -> {
-            status.text = response["response"].toString()
+        if (response["code"] == 200) {
+          if (response.getJSONObject("data")["Status"].toString() == "0") {
+            status.text = response.getJSONObject("data")["profit"].toString()
+            loading.closeDialog()
+          } else {
+            goTo = Intent(applicationContext, MainActivity::class.java)
+            startActivity(goTo)
+            finish()
             loading.closeDialog()
           }
+        } else {
+          status.text = response["response"].toString()
+          loading.closeDialog()
         }
       } catch (e: Exception) {
         runOnUiThread {
