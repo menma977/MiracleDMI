@@ -146,51 +146,44 @@ class HomeActivity : AppCompatActivity() {
     body["Stats"] = "0"
     Timer().schedule(2500) {
       response = DogeController(body).execute().get()
-      when {
-        response["code"] == 200 -> {
-          balanceValue = response.getJSONObject("data")["Balance"].toString().toBigDecimal()
-          val balanceLimit = when {
-            user.getString("limitDeposit").isEmpty() -> {
-              valueFormat.dogeToDecimal(limitDepositDefault)
-            }
-            else -> {
-              valueFormat.dogeToDecimal(user.getString("limitDeposit").toBigDecimal())
-            }
+      if (response["code"] == 200) {
+        balanceValue = response.getJSONObject("data")["Balance"].toString().toBigDecimal()
+        val balanceLimit = when {
+          user.getString("limitDeposit").isEmpty() -> {
+            valueFormat.dogeToDecimal(limitDepositDefault)
           }
-          when {
-            valueFormat.decimalToDoge(balanceValue) >= BigDecimal(10000) && balanceValue < balanceLimit -> {
-              runOnUiThread {
-                withdrawContent.visibility = LinearLayout.GONE
-                play.isEnabled = true
-                balance.text = "${valueFormat.decimalToDoge(balanceValue).toPlainString()} DOGE"
-                loading.closeDialog()
-              }
-            }
-            balanceValue >= balanceLimit -> {
-              runOnUiThread {
-                withdrawContent.visibility = LinearLayout.VISIBLE
-                play.isEnabled = false
-                balance.text = "${valueFormat.decimalToDoge(balanceValue).toPlainString()} DOGE terlalu tinggi"
-                loading.closeDialog()
-              }
-            }
-            else -> {
-              runOnUiThread {
-                withdrawContent.visibility = LinearLayout.GONE
-                play.isEnabled = false
-                balance.text = "${valueFormat.decimalToDoge(balanceValue).toPlainString()} DOGE terlalu kecil"
-                loading.closeDialog()
-              }
-            }
+          else -> {
+            valueFormat.dogeToDecimal(user.getString("limitDeposit").toBigDecimal())
           }
         }
-        else -> {
+        if (valueFormat.decimalToDoge(balanceValue) >= BigDecimal(10000) && balanceValue < balanceLimit) {
+          runOnUiThread {
+            withdrawContent.visibility = LinearLayout.GONE
+            play.isEnabled = true
+            balance.text = "${valueFormat.decimalToDoge(balanceValue).toPlainString()} DOGE"
+            loading.closeDialog()
+          }
+        } else if (balanceValue >= balanceLimit) {
+          runOnUiThread {
+            withdrawContent.visibility = LinearLayout.VISIBLE
+            play.isEnabled = false
+            balance.text = "${valueFormat.decimalToDoge(balanceValue).toPlainString()} DOGE terlalu tinggi"
+            loading.closeDialog()
+          }
+        } else {
           runOnUiThread {
             withdrawContent.visibility = LinearLayout.GONE
             play.isEnabled = false
-            balance.text = response["data"].toString()
+            balance.text = "${valueFormat.decimalToDoge(balanceValue).toPlainString()} DOGE terlalu kecil"
             loading.closeDialog()
           }
+        }
+      } else {
+        runOnUiThread {
+          withdrawContent.visibility = LinearLayout.GONE
+          play.isEnabled = false
+          balance.text = response["data"].toString()
+          loading.closeDialog()
         }
       }
     }
