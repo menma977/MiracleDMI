@@ -77,9 +77,11 @@ class LoginActivity : AppCompatActivity() {
       when {
         username.text.isEmpty() -> {
           Toast.makeText(this, "Your username cannot be empty", Toast.LENGTH_SHORT).show()
+          loading.closeDialog()
         }
         password.text.isEmpty() -> {
           Toast.makeText(this, "Your password cannot be empty", Toast.LENGTH_SHORT).show()
+          loading.closeDialog()
         }
         else -> {
           loginWeb(username.text.toString(), password.text.toString())
