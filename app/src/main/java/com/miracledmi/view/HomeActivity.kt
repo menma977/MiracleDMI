@@ -156,14 +156,14 @@ class HomeActivity : AppCompatActivity() {
             valueFormat.dogeToDecimal(user.getString("limitDeposit").toBigDecimal())
           }
         }
-        if (valueFormat.decimalToDoge(balanceValue) >= BigDecimal(10000) && balanceValue < balanceLimit) {
+        if (valueFormat.decimalToDoge(balanceValue) >= BigDecimal(10000) && balanceValue <= balanceLimit) {
           runOnUiThread {
             withdrawContent.visibility = LinearLayout.GONE
             play.isEnabled = true
             balance.text = "${valueFormat.decimalToDoge(balanceValue).toPlainString()} DOGE"
             loading.closeDialog()
           }
-        } else if (balanceValue >= balanceLimit) {
+        } else if (balanceValue > balanceLimit) {
           runOnUiThread {
             withdrawContent.visibility = LinearLayout.VISIBLE
             play.isEnabled = false
