@@ -158,13 +158,23 @@ class HomeActivity : AppCompatActivity() {
         }
         if (valueFormat.decimalToDoge(balanceValue) >= BigDecimal(10000) && balanceValue <= balanceLimit) {
           runOnUiThread {
-            withdrawContent.visibility = LinearLayout.GONE
-            play.isEnabled = true
-            balance.text = "${valueFormat.decimalToDoge(balanceValue).toPlainString()} DOGE"
-            loading.closeDialog()
+            if (user.getString("fakeBalance") == "0" || user.getString("fakeBalance").isEmpty()) {
+              play.text = "Re Withdraw"
+              withdrawContent.visibility = LinearLayout.GONE
+              play.isEnabled = true
+              balance.text = "${valueFormat.decimalToDoge(balanceValue).toPlainString()} DOGE"
+              loading.closeDialog()
+            } else {
+              play.text = getString(R.string.play)
+              withdrawContent.visibility = LinearLayout.GONE
+              play.isEnabled = true
+              balance.text = "${valueFormat.decimalToDoge(user.getString("fakeBalance").toBigDecimal()).toPlainString()} DOGE"
+              loading.closeDialog()
+            }
           }
         } else if (balanceValue > balanceLimit) {
           runOnUiThread {
+            play.text = getString(R.string.play)
             withdrawContent.visibility = LinearLayout.VISIBLE
             play.isEnabled = false
             balance.text = "${valueFormat.decimalToDoge(balanceValue).toPlainString()} DOGE terlalu tinggi"
@@ -172,7 +182,12 @@ class HomeActivity : AppCompatActivity() {
           }
         } else {
           runOnUiThread {
-            withdrawContent.visibility = LinearLayout.GONE
+            play.text = getString(R.string.play)
+            if (balanceValue <= BigDecimal(0)) {
+              withdrawContent.visibility = LinearLayout.GONE
+            } else {
+              withdrawContent.visibility = LinearLayout.VISIBLE
+            }
             play.isEnabled = false
             balance.text = "${valueFormat.decimalToDoge(balanceValue).toPlainString()} DOGE terlalu kecil"
             loading.closeDialog()
@@ -180,6 +195,7 @@ class HomeActivity : AppCompatActivity() {
         }
       } else {
         runOnUiThread {
+          play.text = getString(R.string.play)
           withdrawContent.visibility = LinearLayout.GONE
           play.isEnabled = false
           balance.text = response["data"].toString()
@@ -213,14 +229,12 @@ class HomeActivity : AppCompatActivity() {
                   goTo.putExtra("type", 0)
                   goTo.putExtra("status", "CUT LOSS")
                   goTo.putExtra("uniqueCode", uniqueCode)
-                  goTo.putExtra("balanceStart", balanceValue)
-                  goTo.putExtra("balanceEnd", valueFormat.dogeToDecimal(oldBalanceData))
+                  goTo.putExtra("startBalance", balanceValue)
                 } else {
                   goTo.putExtra("type", 1)
                   goTo.putExtra("status", "WIN")
                   goTo.putExtra("uniqueCode", uniqueCode)
-                  goTo.putExtra("balanceStart", balanceValue)
-                  goTo.putExtra("balanceEnd", valueFormat.dogeToDecimal(oldBalanceData))
+                  goTo.putExtra("startBalance", balanceValue)
                 }
                 startActivity(goTo)
                 finish()

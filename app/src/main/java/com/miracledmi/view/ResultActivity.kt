@@ -61,17 +61,24 @@ class ResultActivity : AppCompatActivity() {
       try {
         if (response["code"] == 200) {
           if (response.getJSONObject("data")["Status"].toString() == "0") {
-            status.text = response.getJSONObject("data")["profit"].toString()
-            loading.closeDialog()
+            runOnUiThread {
+              User(applicationContext).setString("fakeBalance", "0")
+              status.text = response.getJSONObject("data")["profit"].toString()
+              loading.closeDialog()
+            }
           } else {
-            goTo = Intent(applicationContext, MainActivity::class.java)
-            startActivity(goTo)
-            finish()
-            loading.closeDialog()
+            runOnUiThread {
+              goTo = Intent(applicationContext, MainActivity::class.java)
+              startActivity(goTo)
+              finish()
+              loading.closeDialog()
+            }
           }
         } else {
-          status.text = response["response"].toString()
-          loading.closeDialog()
+          runOnUiThread {
+            status.text = response["response"].toString()
+            loading.closeDialog()
+          }
         }
       } catch (e: Exception) {
         runOnUiThread {
