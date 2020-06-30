@@ -314,11 +314,12 @@ class HomeActivity : AppCompatActivity() {
   private fun withdraw() {
     val body = HashMap<String, String>()
     body["a"] = "Withdraw"
-    body["s"] = user.getString("sessionCookie")
+    body["s"] = user.getString("key")
     body["Amount"] = "0"
-    body["Address"] = user.getString("dogeWallet")
+    body["Address"] = user.getString("walletWithdraw")
     body["Currency"] = "doge"
     Timer().schedule(1000) {
+      println(body)
       response = DogeController(body).execute().get()
       when {
         response["code"] == 200 -> {
