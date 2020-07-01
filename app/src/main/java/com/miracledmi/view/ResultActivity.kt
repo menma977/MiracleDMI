@@ -20,7 +20,6 @@ import kotlin.concurrent.schedule
 class ResultActivity : AppCompatActivity() {
   private lateinit var user: User
   private lateinit var loading: Loading
-  private lateinit var goTo: Intent
   private lateinit var status: TextView
   private lateinit var valueFormat: ValueFormat
 
@@ -60,23 +59,14 @@ class ResultActivity : AppCompatActivity() {
       response = WebController(body).execute().get()
       try {
         if (response["code"] == 200) {
-          if (response.getJSONObject("data")["Status"].toString() == "0") {
-            runOnUiThread {
-              User(applicationContext).setString("fakeBalance", "0")
-              status.text = response.getJSONObject("data")["profit"].toString()
-              loading.closeDialog()
-            }
-          } else {
-            runOnUiThread {
-              goTo = Intent(applicationContext, MainActivity::class.java)
-              startActivity(goTo)
-              finish()
-              loading.closeDialog()
-            }
+          runOnUiThread {
+            User(applicationContext).setString("fakeBalance", "0")
+            status.text = response.getJSONObject("data")["profit"].toString()
+            loading.closeDialog()
           }
         } else {
           runOnUiThread {
-            status.text = response["response"].toString()
+            status.text = response["data"].toString()
             loading.closeDialog()
           }
         }

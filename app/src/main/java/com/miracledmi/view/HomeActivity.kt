@@ -294,11 +294,7 @@ class HomeActivity : AppCompatActivity() {
           }
         } else {
           runOnUiThread {
-            Toast.makeText(
-              applicationContext,
-              response["data"].toString(),
-              Toast.LENGTH_LONG
-            ).show()
+            Toast.makeText(applicationContext, response["data"].toString(), Toast.LENGTH_LONG).show()
             loading.closeDialog()
           }
         }
@@ -319,7 +315,6 @@ class HomeActivity : AppCompatActivity() {
     body["Address"] = user.getString("walletWithdraw")
     body["Currency"] = "doge"
     Timer().schedule(1000) {
-      println(body)
       response = DogeController(body).execute().get()
       when {
         response["code"] == 200 -> {
