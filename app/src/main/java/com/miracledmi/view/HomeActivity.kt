@@ -160,7 +160,7 @@ class HomeActivity : AppCompatActivity() {
           runOnUiThread {
             withdrawContent.visibility = LinearLayout.GONE
             play.isEnabled = true
-            balance.text = "${valueFormat.decimalToDoge(user.getString("fakeBalance").toBigDecimal()).toPlainString()} DOGE"
+            balance.text = "${valueFormat.decimalToDoge(balanceValue).toPlainString()} DOGE"
             loading.closeDialog()
           }
         } else if (balanceValue > balanceLimit) {

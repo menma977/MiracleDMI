@@ -60,7 +60,6 @@ class ResultActivity : AppCompatActivity() {
       try {
         if (response["code"] == 200) {
           runOnUiThread {
-            User(applicationContext).setString("fakeBalance", "0")
             status.text = response.getJSONObject("data")["profit"].toString()
             loading.closeDialog()
           }
