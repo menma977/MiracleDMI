@@ -15,7 +15,6 @@ import com.miracledmi.model.User
 import org.json.JSONObject
 import java.util.*
 import kotlin.concurrent.schedule
-import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
   private lateinit var loading: TextView
@@ -70,36 +69,25 @@ class MainActivity : AppCompatActivity() {
       body["ref"] = MD5().convert(user.getString("username") + user.getString("password") + "versi" + "b0d0nk111179")
       response = WebController(body).execute().get()
       if (response["code"] == 200) {
-        if (response.getJSONObject("data")["Status"] == "0") {
-          if (response.getJSONObject("data")["versiapk"] == BuildConfig.VERSION_CODE.toString()) {
-            if (user.getString("username").isEmpty()) {
-              runOnUiThread {
-                timer.cancel()
-                timer.purge()
-                goTo = Intent(applicationContext, LoginActivity::class.java)
-                goTo.putExtra("lock", false)
-                goTo.putExtra("version", "Build Version ${BuildConfig.VERSION_NAME}")
-                startActivity(goTo)
-                finish()
-              }
-            } else {
-              runOnUiThread {
-                timer.cancel()
-                timer.purge()
-                user.setString("wallet", response.getJSONObject("data")["walletdepo"].toString())
-                user.setString("limitDeposit", response.getJSONObject("data")["maxdepo"].toString())
-                goTo = Intent(applicationContext, HomeActivity::class.java)
-                startActivity(goTo)
-                finish()
-              }
+        if (response.getJSONObject("data")["versiapk"] == BuildConfig.VERSION_CODE.toString()) {
+          if (user.getString("username").isEmpty()) {
+            runOnUiThread {
+              timer.cancel()
+              timer.purge()
+              goTo = Intent(applicationContext, LoginActivity::class.java)
+              goTo.putExtra("lock", false)
+              goTo.putExtra("version", "Build Version ${BuildConfig.VERSION_NAME}")
+              startActivity(goTo)
+              finish()
             }
           } else {
             runOnUiThread {
               timer.cancel()
               timer.purge()
-              user.clear()
-              config.clear()
-              goTo = Intent(Intent.ACTION_VIEW, Uri.parse("https://miracledmi.com/download/miracle.apk"))
+              user.setString("wallet", response.getJSONObject("data")["walletdepo"].toString())
+              user.setString("limitDeposit", response.getJSONObject("data")["maxdepo"].toString())
+              user.setBoolean("ifPlay", response.getJSONObject("data")["adamain"].toString().toBoolean())
+              goTo = Intent(applicationContext, HomeActivity::class.java)
               startActivity(goTo)
               finish()
             }
@@ -110,9 +98,7 @@ class MainActivity : AppCompatActivity() {
             timer.purge()
             user.clear()
             config.clear()
-            goTo = Intent(applicationContext, LoginActivity::class.java)
-            goTo.putExtra("lock", false)
-            goTo.putExtra("version", "Build Version ${BuildConfig.VERSION_NAME}")
+            goTo = Intent(Intent.ACTION_VIEW, Uri.parse("https://miracledmi.com/download/miracle.apk"))
             startActivity(goTo)
             finish()
           }
@@ -121,14 +107,11 @@ class MainActivity : AppCompatActivity() {
         runOnUiThread {
           timer.cancel()
           timer.purge()
-          user.clear()
-          config.clear()
+          goTo = Intent(applicationContext, LoginActivity::class.java)
+          goTo.putExtra("lock", true)
+          goTo.putExtra("version", "404 please Reset APK")
+          startActivity(goTo)
           finish()
-          Timer().schedule(2500) {
-            runOnUiThread {
-              exitProcess(0)
-            }
-          }
         }
       }
     }

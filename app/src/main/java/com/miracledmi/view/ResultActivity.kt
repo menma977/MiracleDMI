@@ -41,6 +41,10 @@ class ResultActivity : AppCompatActivity() {
     uniqueCode = intent.getSerializableExtra("uniqueCode").toString()
     startBalance = intent.getSerializableExtra("startBalance").toString().toBigDecimal()
 
+    sendDataToWeb()
+  }
+
+  private fun sendDataToWeb() {
     Timer().schedule(1000) {
       val body = HashMap<String, String>()
       body["a"] = "EndTrading1"
@@ -60,6 +64,8 @@ class ResultActivity : AppCompatActivity() {
       try {
         if (response["code"] == 200) {
           runOnUiThread {
+            user.setString("fakeBalance", "0")
+            user.setBoolean("ifPlay", false)
             status.text = response.getJSONObject("data")["profit"].toString()
             loading.closeDialog()
           }

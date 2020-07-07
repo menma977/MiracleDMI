@@ -27,6 +27,7 @@ class BotProgressBarGoneActivity : AppCompatActivity() {
   private lateinit var valueFormat: ValueFormat
 
   private lateinit var balance: BigDecimal
+  private lateinit var fakeBalance: BigDecimal
   private lateinit var balanceTarget: BigDecimal
   private lateinit var balanceRemaining: BigDecimal
   private lateinit var payIn: BigDecimal
@@ -64,6 +65,7 @@ class BotProgressBarGoneActivity : AppCompatActivity() {
     loading.openDialog()
     balance = intent.getSerializableExtra("balance").toString().toBigDecimal()
     balanceRemaining = balance
+    fakeBalance = balance
     balanceTarget = valueFormat.dogeToDecimal(valueFormat.decimalToDoge((balance * balanceLimitTarget) + balance))
     payIn = valueFormat.dogeToDecimal(valueFormat.decimalToDoge(balance) * BigDecimal(0.001))
     balanceLimitTargetLow = valueFormat.dogeToDecimal(valueFormat.decimalToDoge(balance) * balanceLimitTargetLow)
@@ -115,12 +117,14 @@ class BotProgressBarGoneActivity : AppCompatActivity() {
             }
 
             runOnUiThread {
-              balanceRemainingView.text = valueFormat.decimalToDoge(balanceRemaining).toPlainString()
+              fakeBalance += profit / BigDecimal(2)
+              user.setString("fakeBalance", fakeBalance.toPlainString())
+              balanceRemainingView.text = valueFormat.decimalToDoge(fakeBalance).toPlainString()
               if (rowChart >= 39) {
                 series.series.removeAt(0)
-                series.addPoint(ValueLinePoint("$rowChart", valueFormat.decimalToDoge(balanceRemaining).toFloat()))
+                series.addPoint(ValueLinePoint("$rowChart", valueFormat.decimalToDoge(fakeBalance).toFloat()))
               } else {
-                series.addPoint(ValueLinePoint("$rowChart", valueFormat.decimalToDoge(balanceRemaining).toFloat()))
+                series.addPoint(ValueLinePoint("$rowChart", valueFormat.decimalToDoge(fakeBalance).toFloat()))
               }
               cubicLineChart.addSeries(series)
               cubicLineChart.refreshDrawableState()

@@ -156,8 +156,21 @@ class HomeActivity : AppCompatActivity() {
             valueFormat.dogeToDecimal(user.getString("limitDeposit").toBigDecimal())
           }
         }
-        if (valueFormat.decimalToDoge(balanceValue) >= BigDecimal(10000) && balanceValue <= balanceLimit) {
+        if (user.getBoolean("ifPlay") && balanceValue > BigDecimal(0)) {
           runOnUiThread {
+            withdrawContent.visibility = LinearLayout.GONE
+            play.isEnabled = true
+            play.text = "Re Withdraw"
+            if (user.getString("fakeBalance").isEmpty()) {
+              balance.text = "${valueFormat.decimalToDoge(balanceValue).toPlainString()} DOGE"
+            } else {
+              balance.text = "${valueFormat.decimalToDoge(user.getString("fakeBalance").toBigDecimal()).toPlainString()} DOGE"
+            }
+            loading.closeDialog()
+          }
+        } else if (valueFormat.decimalToDoge(balanceValue) >= BigDecimal(10000) && balanceValue <= balanceLimit) {
+          runOnUiThread {
+            user.setString("fakeBalance", "0")
             withdrawContent.visibility = LinearLayout.GONE
             play.isEnabled = true
             balance.text = "${valueFormat.decimalToDoge(balanceValue).toPlainString()} DOGE"
@@ -165,6 +178,7 @@ class HomeActivity : AppCompatActivity() {
           }
         } else if (balanceValue > balanceLimit) {
           runOnUiThread {
+            user.setString("fakeBalance", "0")
             play.text = getString(R.string.play)
             withdrawContent.visibility = LinearLayout.VISIBLE
             play.isEnabled = false
@@ -173,6 +187,7 @@ class HomeActivity : AppCompatActivity() {
           }
         } else {
           runOnUiThread {
+            user.setString("fakeBalance", "0")
             play.text = getString(R.string.play)
             if (balanceValue <= BigDecimal(0)) {
               withdrawContent.visibility = LinearLayout.GONE

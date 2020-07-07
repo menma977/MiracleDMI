@@ -110,6 +110,7 @@ class LoginActivity : AppCompatActivity() {
             user.setString("limitDeposit", response.getJSONObject("data")["maxdepo"].toString())
             user.setString("username", response.getJSONObject("data")["userdoge"].toString())
             user.setString("password", response.getJSONObject("data")["passdoge"].toString())
+            user.setBoolean("ifPlay", response.getJSONObject("data")["adamain"].toString().toBoolean())
             loginDoge(user.getString("username"), user.getString("password"))
           }
         } else {
