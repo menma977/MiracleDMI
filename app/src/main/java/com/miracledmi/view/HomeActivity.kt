@@ -1,5 +1,6 @@
 package com.miracledmi.view
 
+import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -25,6 +26,7 @@ import java.math.MathContext
 import java.util.*
 import kotlin.concurrent.schedule
 
+@SuppressLint("UseSwitchCompatOrMaterialCode")
 class HomeActivity : AppCompatActivity() {
   private lateinit var goTo: Intent
   private lateinit var loading: Loading
@@ -98,7 +100,7 @@ class HomeActivity : AppCompatActivity() {
     copy.setOnClickListener {
       clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
       clipData = ClipData.newPlainText("Wallet", wallet.text.toString())
-      clipboardManager.primaryClip = clipData
+      clipboardManager.setPrimaryClip(clipData)
       Toast.makeText(applicationContext, "Dompet Doge telah disalin", Toast.LENGTH_LONG).show()
     }
 
